@@ -1016,6 +1016,7 @@ table_regression %&gt;%
   modelsummary(
     models = .,
     stars = TRUE,
+    booktabs = TRUE,
     output = &quot;latex_tabular&quot;
   ) %&gt;%
   gsub(&quot;\\multicolumn.*\\\\&quot;, &quot;&quot;, .) %&gt;%

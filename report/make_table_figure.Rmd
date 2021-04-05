@@ -76,6 +76,7 @@ table_regression %>%
   modelsummary(
     models = .,
     stars = TRUE,
+    booktabs = TRUE,
     output = "latex_tabular"
   ) %>%
   gsub("\\multicolumn.*\\\\", "", .) %>%
