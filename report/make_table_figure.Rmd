@@ -1,0 +1,162 @@
+---
+title: "Reporting"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load libraries and data
+
+```{r}
+library(magrittr)
+library(kableExtra)
+library(modelsummary)
+library(ggplot2)
+df <- chickwts
+```
+
+# Table
+
+## Table by kableExtra
+
+
+```{r}
+# make summary table
+table_summary <-
+  df %>%
+  dplyr::group_by(feed) %>%
+  dplyr::summarise(
+    N = length(weight),
+    mean = mean(weight),
+    sd = sd(weight),
+    min = min(weight),
+    median = median(weight),
+    max = max(weight),
+    .groups = "drop"
+  ) %>%
+  dplyr::ungroup() 
+
+# export to html for display
+table_summary %>%
+  kbl() %>%
+  kable_styling()
+
+# export to latex for draft
+table_summary%>%
+  kbl(
+    format = "latex",
+    booktabs = TRUE
+  ) %>%
+  save_kable(
+    file = here::here("figuretable/tutorial_table_kable.tex")
+  )
+```
+## Regression table by modelsummary
+
+```{r}
+# run a regression
+table_regression <-
+  df %>%
+  lfe::felm(
+    data = .,
+    formula = weight ~ as.factor(feed)
+  )
+
+# export to html for display
+table_regression %>%
+  modelsummary(
+    models = .,
+    stars = TRUE
+  )
+
+# export to latex for draft
+table_regression %>%
+  modelsummary(
+    models = .,
+    stars = TRUE,
+    output = "latex_tabular"
+  ) %>%
+  gsub("\\multicolumn.*\\\\", "", .) %>%
+  save_kable(
+    file = here::here("figuretable/tutorial_table_modelsummary.tex")
+    )
+```
+
+# Figure
+
+## Bar plot by ggplot2
+
+```{r}
+# display plot
+df %>%
+  dplyr::group_by(feed) %>%
+  dplyr::summarise(
+    mean = mean(weight),
+    upper = mean(weight) + sd(weight),
+    lower = mean(weight) - sd(weight),
+    .groups = "drop"
+  ) %>%
+  ggplot(
+    aes(
+      x = feed,
+      y = mean
+    )
+  ) +
+  geom_bar(
+    stat = "identity",
+    fill = "skyblue"
+    ) +
+  labs(
+    x = "Feed",
+    y = "Weight (g)"
+  ) +
+  theme_classic() 
+# save
+ggsave(
+  filename = here::here("figuretable/tutorial_figure_bar_ggplot2.png"),
+  width = 4,
+  height = 3
+)
+```
+
+## Error bar plot by ggplot2
+
+```{r}
+# display plot
+df %>%
+  dplyr::group_by(feed) %>%
+  dplyr::summarise(
+    mean = mean(weight),
+    upper = mean(weight) + sd(weight),
+    lower = mean(weight) - sd(weight),
+    .groups = "drop"
+  ) %>%
+  ggplot(
+    aes(
+      x = feed,
+      y = mean
+    )
+  ) +
+  geom_bar(
+    stat = "identity",
+    fill = "skyblue"
+    ) +
+  geom_errorbar(
+    aes(
+      x = feed,
+      ymin = lower,
+      ymax = upper
+    ),
+    width = 0.5
+  ) +
+  theme_classic()
+# save
+ggsave(
+  filename = here::here("figuretable/tutorial_figure_errorbar_ggplot2.png"),
+  width = 4,
+  height = 3
+)
+```
+
