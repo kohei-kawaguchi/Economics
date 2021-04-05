@@ -1,5 +1,5 @@
 outs:
-- md5: d751713988987e9331980363e24189ce.dir
-  size: 0
-  nfiles: 0
+- md5: 72dd4bc4eeed2a1ec9e562840c6ceb5b.dir
+  size: 133
+  nfiles: 1
   path: output
