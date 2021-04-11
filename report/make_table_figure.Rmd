@@ -1,6 +1,8 @@
 ---
 title: "Reporting"
-output: html_document
+output: 
+  html_document:
+    keep_md: TRUE
 ---
 
 ```{r setup, include=FALSE}
@@ -41,7 +43,7 @@ table_summary <-
 # export to html for display
 table_summary %>%
   kbl() %>%
-  kable_styling()
+  kable_classic()
 
 # export to latex for draft
 table_summary%>%
@@ -69,7 +71,8 @@ table_regression %>%
   modelsummary(
     models = .,
     stars = TRUE
-  )
+  ) %>%
+  kable_classic()
 
 # export to latex for draft
 table_regression %>%
