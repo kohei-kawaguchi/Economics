@@ -95,8 +95,6 @@ df %>%
   dplyr::group_by(feed) %>%
   dplyr::summarise(
     mean = mean(weight),
-    upper = mean(weight) + sd(weight),
-    lower = mean(weight) - sd(weight),
     .groups = "drop"
   ) %>%
   ggplot(
