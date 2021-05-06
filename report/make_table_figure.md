@@ -12,7 +12,21 @@ output:
 
 ```r
 library(magrittr)
+```
+
+```
+## Warning: package 'magrittr' was built under R version 4.0.3
+```
+
+```r
 library(kableExtra)
+```
+
+```
+## Warning: package 'kableExtra' was built under R version 4.0.5
+```
+
+```r
 library(modelsummary)
 library(ggplot2)
 df <- chickwts
@@ -251,25 +265,28 @@ df %>%
   dplyr::group_by(feed) %>%
   dplyr::summarise(
     mean = mean(weight),
-    upper = mean(weight) + sd(weight),
-    lower = mean(weight) - sd(weight),
     .groups = "drop"
   ) %>%
+  dplyr::mutate(group = "all") %>%
   ggplot(
     aes(
       x = feed,
-      y = mean
+      y = mean,
+      fill = group
     )
   ) +
   geom_bar(
-    stat = "identity",
-    fill = "skyblue"
+    stat = "identity"
     ) +
   labs(
     x = "Feed",
     y = "Weight (g)"
   ) +
-  theme_classic() 
+  scale_fill_viridis_d() +
+  theme_classic() +
+  theme(
+    legend.position = "none"
+  )
 ```
 
 ![](make_table_figure_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
@@ -296,15 +313,16 @@ df %>%
     lower = mean(weight) - sd(weight),
     .groups = "drop"
   ) %>%
+  dplyr::mutate(group = "all") %>%
   ggplot(
     aes(
       x = feed,
-      y = mean
+      y = mean,
+      fill = group
     )
   ) +
   geom_bar(
-    stat = "identity",
-    fill = "skyblue"
+    stat = "identity"
     ) +
   geom_errorbar(
     aes(
@@ -314,7 +332,11 @@ df %>%
     ),
     width = 0.5
   ) +
-  theme_classic()
+  scale_fill_viridis_d() +
+  theme_classic() +
+  theme(
+    legend.position = "none"
+  )
 ```
 
 ![](make_table_figure_files/figure-html/unnamed-chunk-5-1.png)<!-- -->

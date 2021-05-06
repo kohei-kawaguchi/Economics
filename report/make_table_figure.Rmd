@@ -100,21 +100,26 @@ df %>%
     mean = mean(weight),
     .groups = "drop"
   ) %>%
+  dplyr::mutate(group = "all") %>%
   ggplot(
     aes(
       x = feed,
-      y = mean
+      y = mean,
+      fill = group
     )
   ) +
   geom_bar(
-    stat = "identity",
-    fill = "skyblue"
+    stat = "identity"
     ) +
   labs(
     x = "Feed",
     y = "Weight (g)"
   ) +
-  theme_classic() 
+  scale_fill_viridis_d() +
+  theme_classic() +
+  theme(
+    legend.position = "none"
+  )
 # save
 ggsave(
   filename = here::here("figuretable/tutorial_figure_bar_ggplot2.png"),
@@ -135,15 +140,16 @@ df %>%
     lower = mean(weight) - sd(weight),
     .groups = "drop"
   ) %>%
+  dplyr::mutate(group = "all") %>%
   ggplot(
     aes(
       x = feed,
-      y = mean
+      y = mean,
+      fill = group
     )
   ) +
   geom_bar(
-    stat = "identity",
-    fill = "skyblue"
+    stat = "identity"
     ) +
   geom_errorbar(
     aes(
@@ -153,7 +159,11 @@ df %>%
     ),
     width = 0.5
   ) +
-  theme_classic()
+  scale_fill_viridis_d() +
+  theme_classic() +
+  theme(
+    legend.position = "none"
+  )
 # save
 ggsave(
   filename = here::here("figuretable/tutorial_figure_errorbar_ggplot2.png"),
