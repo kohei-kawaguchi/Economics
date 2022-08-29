@@ -7,7 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_knit$set(root.dir = "C:\\Users\\86156\\Documents\\EmpiricalIO")
+knitr::opts_knit$set(root.dir = "C:\\Users\\86156\\Economics")
 ```
 
 ## R Markdown
@@ -34,7 +34,6 @@ for (i in seq(2,2000,by=2)) {
     df$y[i] <- 1
   }
 }
-save(df,file = "output//simulatedata.RData")
 head(df)
 ```
 
@@ -48,7 +47,7 @@ for (j in 1:length(beta_search)) {
   likelihood[j] <- loglikelihood_A1(b=beta_search[j])
 }
 likelihood <- as.data.frame(cbind(beta_search,likelihood))
-save(likelihood,file="output//likelihood.RData")
+save(likelihood,file="output//likelihood_A1.RData")
 ```
 
 2.2. Plot likelihood for beta from 0 to 1. We can find 0.2 has the largest likelihood.

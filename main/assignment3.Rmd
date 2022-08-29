@@ -7,7 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_knit$set(root.dir = "C:\\Users\\86156\\Documents\\EmpiricalIO")
+knitr::opts_knit$set(root.dir = "C:\\Users\\86156\\Economics")
 ```
 
 ## R Markdown
