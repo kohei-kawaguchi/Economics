@@ -1,0 +1,159 @@
+---
+title: "Untitled"
+author: "DingYuchen"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "C:\\Users\\86156\\Documents\\EmpiricalIO")
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r set parameters}
+# set the seed
+set.seed(1)
+# number of products
+J <- 10
+# dimension of product characteristics including the intercept
+K <- 3
+# number of markets
+T <- 100
+# number of consumers per market
+N <- 500
+# number of Monte Carlo
+L <- 500
+# set parameters of interests
+beta <- rnorm(K); 
+beta[1] <- 4
+sigma <- abs(rnorm(K))
+mu <- 0.5
+omega <- 1
+# set auxiliary parameters
+price_xi <- 1
+prop_jt <- 0.6
+sd_x <- 0.5
+sd_xi <- 0.5
+sd_c <- 0.05
+sd_p <- 0.05
+```
+
+## Including Plots
+
+
+```{r simulate data}
+# product features
+library(dplyr)
+X <- data.frame(j = 0:J, x_1 = c(0,rep(1,J)), x_2 = c(0,rnorm(J,0,sd_x)),
+                x_3 = c(0,rnorm(J,0,sd_x)))
+# market-product prices
+xi <- rnorm(T*J,0,sd_xi)
+c <- rlnorm(T*J,0,sd_c)
+p <- c + rlnorm(T*J,0,sd_p)
+M <- data.frame(j = rep(1:J,T), t = rep(1:T, each=J), 
+                xi = rep(0,T*J), c, p) # no fixed effect in A3
+M <- M %>% dplyr::group_by(t) %>% dplyr::sample_frac(prop_jt) %>%
+   dplyr::ungroup() #sample products
+OO <- data.frame(j = rep(0,T), t = 1:T, xi = rep(0,T), 
+                        c= rep(0,T), p= rep(0,T)) #outside options
+M <- rbind(M,OO) %>% arrange(t,j)
+#consumer hererogenity
+V <- data.frame(i = rep(1:N,T), t = rep(1:T, each=N), v_x_1 = rnorm(T*N),
+                v_x_2 = rnorm(T*N), v_x_3 = rnorm(T*N), v_p = rnorm(T*N))
+df <- M %>% dplyr::left_join(X,by="j") %>% 
+  dplyr::left_join(V,by="t") %>% dplyr::arrange(t,i,j)
+e <- evd::rgumbel(nrow(df))
+head(e)
+head(df)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r compute share}
+# compute share
+source("R//indirect_utility.R")
+source("R//choice.R")
+source("R//share.R")    
+df_choice <- compute_choice(X, M, V, e, beta, sigma, mu, omega)    
+df_share <- compute_share(X, M, V, e, beta, sigma, mu, omega)  
+save(df_share, file = "output//df_share_A3.RData")
+summary(df_choice)
+summary(df_share) 
+```
+```{r linear regression}
+lm(y ~ x_1 + x_2 + x_3 + p, data = df_share)
+```
+
+
+```{r Monte-Carlo simulation}
+# Monte-Carlo simulation
+V_mcmc <- data.frame(i = rep(1:L,T), t = rep(1:T, each=L), v_x_1 = rnorm(T*L),
+                v_x_2 = rnorm(T*L), v_x_3 = rnorm(T*L), v_p = rnorm(T*L))
+e_mcmc <- evd::rgumbel(nrow(df))
+df_share_mcmc <- compute_share(X, M, V_mcmc, e_mcmc, beta, sigma, mu, omega)
+head(df_share_mcmc)
+# set parameters
+theta <- c(beta, sigma, mu, omega)
+# objective function
+source("R//NLLS_A3.R")
+NLLS_objective_A3(theta,df_share,X,M,V_mcmc,e_mcmc)
+   
+```
+
+
+```{r plot mc}
+#  objective function, simulated shock
+t <- seq(0.5,1.5,by=0.1)
+library(latex2exp)
+x_labs <- c(TeX("$\\beta_1$"), TeX("$\\beta_2$"), TeX("$\\beta_3$"),
+          TeX("$\\sigma_1$"), TeX("$\\sigma_2$"), TeX("$\\sigma_3$"),
+          TeX("$\\mu$"), TeX("$\\omega$"))
+library(doParallel)
+doParallel::registerDoParallel()
+foreach::foreach(i = 1:8, .packages = c("dplyr","ggplot2")) %dopar% {
+ object_fn <- rep(0,length(t))
+ theta_search <- theta
+ for (j in 1:length(t)) {
+   theta_search[i] <- theta[i]*t[j]
+   object_fn[j] <- NLLS_objective_A3(theta_search,df_share,X,M,V_mcmc,e_mcmc)
+ }
+ df_object <- data.frame(x = theta[i]*t, y = object_fn)
+ ggplot(df_object, aes(x,y))+
+  geom_point()+
+  coord_cartesian()+
+  labs(x = x_labs[i] , y = "objective function")
+}
+```
+```{r plot true}
+# objective function, true shock
+doParallel::registerDoParallel(8)
+foreach::foreach(i = 1:8, .packages = c("dplyr","ggplot2")) %dopar% {
+ object_fn <- rep(0,length(t))
+ theta_search <- theta
+ for (j in 1:length(t)) {
+   theta_search[i] <- theta[i]*t[j]
+   object_fn[j] <- NLLS_objective_A3(theta_search,df_share,X,M,V,e)
+ }
+ df_object <- data.frame(x = theta[i]*t, y = object_fn)
+ ggplot(df_object, aes(x,y))+
+  geom_point()+
+  coord_cartesian()+
+  labs(x = x_labs[i] , y = "Loglikelihood")
+}
+```
+
+
+```{r optimizition}
+# optimize
+NLLS2 <- function(theta2) {NLLS_objective_A3(theta2, df_share,
+                                             X, M, V_mcmc,e_mcmc)}
+optim_list <- optim(theta, fn = NLLS2)
+optim_list
+data.frame(estimate = optim_list$par,true = theta)
+```
+

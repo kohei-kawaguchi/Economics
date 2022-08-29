@@ -1,0 +1,237 @@
+---
+title: "Untitled"
+author: "DingYuchen"
+date: '`r Sys.Date()`'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "C:\\Users\\86156\\Documents\\EmpiricalIO")
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r set parameters}
+# set the seed
+set.seed(1)
+# number of products
+J <- 10
+# dimension of product characteristics including the intercept
+K <- 3
+# number of markets
+T <- 100
+# number of consumers per market
+N <- 500
+# number of Monte Carlo
+L <- 500
+# set parameters of interests
+beta <- rnorm(K); 
+beta[1] <- 4
+beta
+sigma <- abs(rnorm(K)); sigma
+mu <- 0.5
+omega <- 1
+# set auxiliary parameters
+price_xi <- 1
+sd_x <- 2
+sd_xi <- 0.5
+sd_c <- 0.05
+sd_p <- 0.05
+```
+
+```{r product}
+# product variables
+X <- data.frame(j = 0:J, x_1 = c(0,rep(1,J)), x_2 = c(0,rnorm(J,0,sd_x)),
+                x_3 = c(0,rnorm(J,0,sd_x)))
+# market-product prices
+xi <- rnorm(T*J,0,sd_xi)
+c <- rlnorm(T*J,0,sd_c)
+p <- c + rlnorm(T*J,price_xi*xi,sd_p)
+M <- data.frame(j = rep(1:J,T), t = rep(1:T, each=J), 
+                xi, c, p)
+```
+
+
+```{r price}
+library(dplyr)
+# sample product
+Jt <- NA
+MM <- data.frame()
+for (i in 1:T) {
+  Jt[i] <- sample(1:J,1)
+M_no <- filter(M,t==i) %>% slice_sample(n=Jt[i])
+MM <- rbind(MM,M_no)
+}
+MM <- arrange(MM,t,j)
+OO <- data.frame(j = rep(0,T), t = 1:T, xi = rep(0,T), 
+                        c= rep(0,T), p= rep(0,T)) #outside options
+M <- rbind(MM,OO) %>% arrange(t,j)
+remove(MM,OO,M_no)
+```
+
+
+```{r consumer}
+#consumer hererogenity
+V <- data.frame(i = rep(1:N,T), t = rep(1:T, each=N), v_x_1 = rnorm(T*N),
+                v_x_2 = rnorm(T*N), v_x_3 = rnorm(T*N), v_p = rnorm(T*N))
+df <- M %>% dplyr::left_join(X,by="j") %>% 
+  dplyr::left_join(V,by="t") %>% dplyr::arrange(t,i,j)
+e <- evd::rgumbel(nrow(df))
+head(e)
+head(df)
+```
+
+
+```{r compute}
+# compute choice and share
+source("R\\indirect_utility.R")
+source("R\\choice_smooth.R")
+source("R\\share_smooth.R")
+u <- compute_indirect_utility(df, beta, sigma, mu, omega)
+head(u)
+df_choice_smooth <- compute_choice_smooth(X, M, V, beta, sigma, mu, omega)
+summary(df_choice_smooth)
+df_share_smooth <- compute_share_smooth(X, M, V, beta, sigma, mu, omega)
+summary(df_share_smooth)
+```
+
+
+```{r MC}
+# Monte-Carlo Simulation
+V_mcmc <- data.frame(i = rep(1:N,T), t = rep(1:T, each=N), v_x_1 = rnorm(T*N),
+                v_x_2 = rnorm(T*N), v_x_3 = rnorm(T*N), v_p = rnorm(T*N))
+e_mcmc <- evd::rgumbel(nrow(df))
+head(V_mcmc)
+head(e_mcmc)
+theta <- c(beta, sigma, mu, omega)
+```
+
+
+```{r A3 method}
+# solve theta without fixed effect
+M_no <- M %>% dplyr::mutate(xi = 0)
+# load functions in A3
+source("R\\NLLS_A3.R")
+source("R\\share.R")
+source("R\\choice.R")
+optim_list <- optim(par = theta, fn = NLLS_objective_A3, 
+                    df_share = df_share_smooth, X = X, M = M_no, 
+                    V_mcmc = V_mcmc, e_mcmc = e_mcmc, method = "Nelder-Mead")
+```
+
+
+```{r compute delta}
+# compute delta
+delta <- left_join(M,X, by ="j") %>% 
+  mutate(delta = beta[1]*x_1 + beta[2]*x_2 + beta[3]*x_3 -
+           exp(mu+omega^2/2)*p + xi) %>%
+  select(t,j,delta)
+head(delta)
+# compute utility, choice, share with delta
+source("R\\indirect_utility_delta.R")
+u_delta <- compute_indirect_utility_delta(df, delta, sigma, mu, omega)
+head(u_delta)
+summary(u - u_delta)
+source("R\\choice_smooth_delta.R")
+df_choice_smooth_delta <- compute_choice_smooth_delta(X,M,V,delta,sigma,mu,omega)
+summary(df_choice_smooth_delta)
+summary(df_choice_smooth$q - df_choice_smooth_delta$q)
+source("R\\share_smooth_delta.R")
+df_share_smooth_delta <-
+  compute_share_smooth_delta(X,M,V,delta,sigma,mu,omega)
+summary(df_share_smooth_delta)
+summary(df_share_smooth$s - df_share_smooth_delta$s)
+```
+
+
+```{r solve delta}
+# solve delta
+kappa <- 1
+lamda <- 1e-3
+source("R\\solve_delta.R")
+delta_new <- solve_delta(df_share_smooth, X, M, V, delta, sigma,
+                         mu, omega,kappa,lamda)
+head(delta_new)
+summary(delta_new$delta - delta$delta)
+```
+
+
+```{r solve delta mc}
+# solve delta with MC shock
+delta_new <- solve_delta(df_share_smooth, X, M, V_mcmc, delta, sigma,
+                         mu, omega,kappa,lamda)
+save(delta_new, file = "output\\A4_delta_new.RData")
+summary(delta_new$delta - delta$delta)
+```
+
+
+```{r solve beta xi}
+# solve beta
+Psi <- diag(length(beta) + 1)
+source("R\\compute_theta_linear.R")
+theta_linear <-
+  compute_theta_linear(df_share_smooth, delta, mu, omega, Psi) 
+cbind(theta_linear, beta)
+# solve xi
+source("R\\solve_xi.R")
+xi_new <- solve_xi(df_share_smooth, delta, beta, mu, omega)
+head(xi_new)
+xi_true <-
+  df_share_smooth %>%
+  dplyr::filter(j != 0) %>%
+  dplyr::select(xi)
+summary(xi_true - xi_new)
+```
+
+
+```{r GMM}
+#GMM objective function
+theta_nonlinear <- c(mu, omega, sigma)
+source("R\\GMM_objective_A4.R")
+objective <- GMM_objective_A4(theta_nonlinear, delta, df_share_smooth, Psi, 
+                   X, M, V_mcmc, kappa, lamda)
+objective
+```
+
+
+```{r GMM plot}
+# plot GMM objective function
+tm <- seq(0,2,by=0.2)
+library(latex2exp)
+x_labs <- c(TeX("$\\mu$"), TeX("$\\omega$"), 
+          TeX("$\\sigma_1$"), TeX("$\\sigma_2$"), TeX("$\\sigma_3$"))
+library(doParallel)
+registerDoParallel()
+foreach::foreach(i = 1:length(theta_nonlinear), 
+                 .packages = c("dplyr","ggplot2")) %dopar% {
+ objective_fn <- rep(0,length(tm))
+ theta_nonlinear_search <- theta_nonlinear
+ for (j in 1:length(tm)) {
+   theta_nonlinear_search[i] <- theta_nonlinear[i]*tm[j]
+   objective_fn[j] <- GMM_objective_A4(theta_nonlinear_search, delta,
+                                       df_share_smooth, Psi, X, M, V, kappa, 
+                                       lamda)
+ }
+ df_object <- data.frame(x = theta_nonlinear[i]*tm, y = objective_fn)
+ ggplot(df_object, aes(x,y))+
+  geom_point()+
+  coord_cartesian()+
+  labs(x = x_labs[i] , y = "objective function")
+}
+```
+
+
+```{r GMM estimate}
+# GMM minimize objective function
+estimate <- optim(par = theta_nonlinear, fn = GMM_objective_A4, delta = delta,
+                  df_share_smooth = df_share_smooth, Psi = Psi, X = X, M = M,
+                  V_mcmc = V_mcmc, kappa = kappa, lamda =lamda)
+cbind(theta_nonlinear, estimate$par)
+```
+
+
