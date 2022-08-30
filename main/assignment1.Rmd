@@ -10,61 +10,67 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = "C:\\Users\\86156\\Economics")
 ```
 
-## R Markdown
-1. Simulate the data and creat a data frame as shown in assignment1.
+# simulate data
 
-```{r simulate data}
+```{r}
 i <- rep(1:1000,each=2)
 k <- rep(1:2,times=1000)
 x <- rep(c(0,1),times=1000)
-#generate random variable
+# generate error
 library(evd)
 set.seed(1)
-e <- rgumbel(2000)
+e <- evd::rgumbel(2000)
 df <- as.data.frame(cbind(i,k,x,e))
-#compute latent variable
+# compute latent variable
 beta <- 0.2
 df$latent <- beta*df$x+df$e
-#generate choice variable
-df$y <- rep(0)
-for (i in seq(2,2000,by=2)) {
-  if(df$latent[i-1]>df$latent[i]){
-    df$y[i-1] <- 1
-  }else{
-    df$y[i] <- 1
-  }
-}
+```
+
+# simulate consumer choice
+
+```{r}
+# generate choice variable
+library(dplyr)
+df <- df %>% 
+  dplyr::group_by(i) %>%
+  dplyr::mutate(y = as.integer(latent == max(latent))) %>%
+  dplyr::ungroup()
 head(df)
 ```
 
-2.1. Then generate a function to compute likelihood, and output likelihood for beta from 0 to 1 by step 0.1.
+# compute likelidood
 
-```{r maximum likelidood estimate}
-source("R\\loglikelihoodA1.R")
+```{r}
+library(Economics)
 beta_search <- seq(0,1,by=0.1)
 likelihood <- c()
 for (j in 1:length(beta_search)) {
-  likelihood[j] <- loglikelihood_A1(b=beta_search[j])
+  likelihood[j] <- Economics::loglikelihood_A1(b=beta_search[j])
 }
 likelihood <- as.data.frame(cbind(beta_search,likelihood))
-save(likelihood,file="output//likelihood_A1.RData")
+save(likelihood,file="output\\assignment1\\likelihood_A1.RData")
 ```
 
-2.2. Plot likelihood for beta from 0 to 1. We can find 0.2 has the largest likelihood.
+# plot likelihood
 
-```{r plot likelihood}
+```{r}
 library(ggplot2)
 library(latex2exp)
-ggplot(likelihood,aes(beta_search,likelihood))+
+ggplot2::ggplot(likelihood,aes(beta_search,likelihood))+
   geom_point()+
   coord_cartesian()+
-  labs(x= TeX("$\\beta$"), y= "Loglikelihood")
-ggsave("figuretable\\loglike.png")
+  labs(x= latex2exp::TeX("$\\beta$"), y= "Loglikelihood")
+ggsave("figuretable\\assignment1\\loglike.png")
 ```
 
-2.3. Search for maximum likelihood on the interval [-1,1]. Results: estimate of beta is 0.2371045, max likelihood is -0.6861689.
+#  search optimal beta
 
-```{r search optimal beta}
-optim(0.2,loglikelihood_A1,method = "Brent",
-      control = list(fnscale=-1),lower = -1,upper = 1)
+```{r}
+# search optimal beta on [-1,1] to maximize likelihood
+optim(par = 0.2,
+      fn = Economics::loglikelihood_A1,
+      method = "Brent",
+      control = list(fnscale=-1),
+      lower = -1,
+      upper = 1)
 ```
