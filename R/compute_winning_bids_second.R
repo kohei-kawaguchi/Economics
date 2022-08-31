@@ -1,7 +1,8 @@
+
 compute_winning_bids_second <- function(valuation, reserve){
-  record = NULL
+  record <- NULL
   for (i in 1:T){
-    val = valuation[which(valuation[,1] == i),"x"]
+    val <- valuation[which(valuation[,1] == i),"x"]
     t <- i
     n <- N[i]
     m <- sum(valuation[which(valuation[,1] == i),"x"]>0.2)
