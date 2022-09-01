@@ -1,8 +1,8 @@
-compute_loglikelihood_first_price_w <- function(theta, df_first_w){
+compute_loglikelihood_first_price_w <- function(theta, df_first_w, T){
   alpha <- theta[1]
   beta <- theta[2]
   ll <- 0
-  for (tt in 1:100){
+  for (tt in 1:T){
     w <- df_first_w[tt,]$w %>% as.numeric()
     r <- df_first_w[tt,]$r %>% as.numeric()
     n <- df_first_w[tt,]$n %>% as.numeric()

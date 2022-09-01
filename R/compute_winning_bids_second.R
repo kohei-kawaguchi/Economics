@@ -1,7 +1,7 @@
 
-compute_winning_bids_second <- function(valuation, reserve){
+compute_winning_bids_second <- function(valuation, reserve,T){
   record <- NULL
-  for (tt in 1:100){
+  for (tt in 1:T){
     val <- valuation[which(valuation[,1] == tt),"x"]
     t <- tt
     n <- N[tt]

@@ -1,6 +1,6 @@
-compute_winning_bids_first <- function(valuation, reserve, alpha, beta){
+compute_winning_bids_first <- function(valuation, reserve, alpha, beta,T){
   record <- NULL
-  for (tt in 1:100){
+  for (tt in 1:T){
     val <- df_first[which(df_first[,1] == tt), "b"]
     t <- tt
     n <- N[tt]

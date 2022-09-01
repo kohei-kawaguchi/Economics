@@ -43,7 +43,7 @@ reserve <- tibble::tibble(t = 1:T, r = reserve)
 ## 3. compute winning bids from second-price auction
 
 df_second_w <-
-  Economics::compute_winning_bids_second(valuation, reserve)
+  Economics::compute_winning_bids_second(valuation, reserve,T)
 df_second_w
 
 ggplot2::ggplot(df_second_w, aes(x = w)) + geom_histogram(fill = "steelblue", alpha = 0.8)
@@ -72,7 +72,7 @@ ggplot2::ggplot(df_first, aes(x = b)) + geom_histogram(fill = "steelblue", alpha
 
 ## 6. compute winning bids from first-price auctions
 df_first_w <-
-  Economics::compute_winning_bids_first(valuation, reserve, alpha, beta)
+  Economics::compute_winning_bids_first(valuation, reserve, alpha, beta,T)
 df_first_w
 
 ggplot2::ggplot(df_first_w, aes(x = w)) + geom_histogram(fill = "steelblue", alpha = 0.8)
@@ -95,7 +95,7 @@ Economics::compute_m0(r, n, alpha, beta)
 ## 2. compute log-likelihood for winning bids from second-price auctions
 
 theta <- c(alpha, beta)
-Economics::compute_loglikelihood_second_price_w(theta, df_second_w)
+Economics::compute_loglikelihood_second_price_w(theta, df_second_w,T)
 
 ## 3. Compare the value of objective function around the true parameters
 
@@ -117,7 +117,7 @@ graph <- foreach::foreach (i = 1:length(theta)) %do% {
                theta_j[i] <- theta_ij
                objective_ij <- 
                  compute_loglikelihood_second_price_w(
-                   theta_j, df_second_w)
+                   theta_j, df_second_w,T)
                return(objective_ij)
              }
   df_graph <- data.frame(x = as.numeric(theta_i_list), 
@@ -140,6 +140,7 @@ result_second_parametric <-
     par = theta,
     fn = compute_loglikelihood_second_price_w,
     df_second_w = df_second_w,
+    T = T,
     method = "L-BFGS-B",
     control = list(fnscale = -1)
   )
@@ -179,7 +180,7 @@ Economics::compute_p_first_w(upper + 1, r, alpha, beta, n)
 
 
 ## 7. compute log-likelihood for winning bids for first-price auctions
-Economics::compute_loglikelihood_first_price_w(theta, df_first_w)
+Economics::compute_loglikelihood_first_price_w(theta, df_first_w,T)
 
 
 ## 8. Compare the value of the objective function around the true parameters.
@@ -199,7 +200,7 @@ graph <- foreach::foreach (i = 1:length(theta)) %do% {
                theta_j[i] <- theta_ij
                objective_ij <- 
                  compute_loglikelihood_first_price_w(
-                   theta_j, df_first_w)
+                   theta_j, df_first_w,T)
                return(objective_ij)
              }
   df_graph <- data.frame(x = as.numeric(theta_i_list), 
@@ -222,6 +223,7 @@ result_first_parametric <-
     par = theta,
     fn = compute_loglikelihood_first_price_w,
     df_first_w = df_first_w,
+    T = T,
     method = "Nelder-Mead",
     control = list(fnscale = -1)
   )

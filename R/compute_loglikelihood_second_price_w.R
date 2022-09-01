@@ -1,8 +1,8 @@
-compute_loglikelihood_second_price_w <- function(theta, df_second_w){
+compute_loglikelihood_second_price_w <- function(theta, df_second_w,T){
   alpha <- theta[1]
   beta <- theta[2]
   ll <- 0
-  for (tt in 1:100){
+  for (tt in 1:T){
     w <- df_second_w[tt,]$w
     r <- df_second_w[tt,]$r
     m <- df_second_w[tt,]$m
