@@ -6,7 +6,6 @@ library(foreach)
 library(latex2exp)
 library(ggplot2)
 library(Economics)
-install.packages("devtools")
 ### 19.1 ###
 
 ## 1. Set the constants and parameters
@@ -42,13 +41,14 @@ reserve <- 0.2
 reserve <- tibble::tibble(t = 1:T, r = reserve)
 
 ## 3. compute winning bids from second-price auction
-#source("R/compute_winning_bids_second.R")
+
 df_second_w <-
   Economics::compute_winning_bids_second(valuation, reserve)
 df_second_w
 
 ggplot2::ggplot(df_second_w, aes(x = w)) + geom_histogram(fill = "steelblue", alpha = 0.8)
-lifecycle::last_lifecycle_warnings()
+
+#lifecycle::last_lifecycle_warnings()
 
 ## 4. compute bid from first-price auction
 
@@ -210,8 +210,8 @@ graph <- foreach::foreach (i = 1:length(theta)) %do% {
     ylab("objective function") + xlab(latex2exp::TeX(label[i]))
   return(g)
 }
-save(graph, file = "data/assign9/A9_first_parametric_graph.RData")
-load(file = "data/assign9/A9_first_parametric_graph.RData")
+save(graph, file = "output/assign9/A9_first_parametric_graph.RData")
+load(file = "output/assign9/A9_first_parametric_graph.RData")
 graph
 
 
@@ -225,9 +225,9 @@ result_first_parametric <-
     method = "Nelder-Mead",
     control = list(fnscale = -1)
   )
-save(result_first_parametric, file = "data/assign9/A9_result_first_parametric.RData")
+save(result_first_parametric, file = "output/assign9/A9_result_first_parametric.RData")
 
-load(file = "data/assign9/A9_result_first_parametric.RData")
+load(file = "output/assign9/A9_result_first_parametric.RData")
 result_first_parametric
 
 comparison <-
