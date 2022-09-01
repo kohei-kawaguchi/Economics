@@ -7,7 +7,6 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_knit$set(root.dir = "C:\\Users\\86156\\Economics")
 ```
 
 # simulate data
@@ -17,7 +16,6 @@ i <- rep(1:1000,each=2)
 k <- rep(1:2,times=1000)
 x <- rep(c(0,1),times=1000)
 # generate error
-library(evd)
 set.seed(1)
 e <- evd::rgumbel(2000)
 df <- as.data.frame(cbind(i,k,x,e))
@@ -30,7 +28,7 @@ df$latent <- beta*df$x+df$e
 
 ```{r}
 # generate choice variable
-library(dplyr)
+library(magrittr)
 df <- df %>% 
   dplyr::group_by(i) %>%
   dplyr::mutate(y = as.integer(latent == max(latent))) %>%
@@ -41,26 +39,24 @@ head(df)
 # compute likelidood
 
 ```{r}
-library(Economics)
 beta_search <- seq(0,1,by=0.1)
 likelihood <- c()
 for (j in 1:length(beta_search)) {
   likelihood[j] <- Economics::loglikelihood_A1(b=beta_search[j])
 }
 likelihood <- as.data.frame(cbind(beta_search,likelihood))
-save(likelihood,file="output\\assignment1\\likelihood_A1.RData")
+save(likelihood,file = here::here("output\\assignment1\\likelihood_A1.RData"))
 ```
 
 # plot likelihood
 
 ```{r}
 library(ggplot2)
-library(latex2exp)
-ggplot2::ggplot(likelihood,aes(beta_search,likelihood))+
+ggplot(likelihood,aes(beta_search,likelihood))+
   geom_point()+
   coord_cartesian()+
   labs(x= latex2exp::TeX("$\\beta$"), y= "Loglikelihood")
-ggsave("figuretable\\assignment1\\loglike.png")
+ggsave(here::here("figuretable\\assignment1\\loglikelihood.png"))
 ```
 
 #  search optimal beta

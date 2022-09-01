@@ -7,7 +7,6 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_knit$set(root.dir = "C:\\Users\\86156\\Economics")
 ```
 
 ## R Markdown
@@ -50,7 +49,7 @@ sd_p <- 0.05
 
 ```{r}
 # product features
-library(dplyr)
+library(magrittr)
 X <- data.frame(j = 0:J,
                 x_1 = c(0, rep(1,J)),
                 x_2 = c(0, rnorm(J,0,sd_x)),
@@ -65,8 +64,10 @@ M <- data.frame(j = rep(1:J, T),
                 xi = rep(0, T*J),
                 c, p) 
 # sample products
-M <- M %>% dplyr::group_by(t) %>% dplyr::sample_frac(prop_jt) %>%
-   dplyr::ungroup() 
+M <- M %>% 
+  dplyr::group_by(t) %>% 
+  dplyr::sample_frac(prop_jt) %>%
+  dplyr::ungroup() 
 # generate outside options
 oo <- data.frame(j = rep(0, T),
                  t = 1:T,
@@ -81,8 +82,10 @@ V <- data.frame(i = rep(1:N, T),
                 v_x_2 = rnorm(T*N),
                 v_x_3 = rnorm(T*N),
                 v_p = rnorm(T*N))
-df <- M %>% dplyr::left_join(X, by="j") %>% 
-  dplyr::left_join(V, by="t") %>% dplyr::arrange(t, i, j)
+df <- M %>% 
+  dplyr::left_join(X, by="j") %>% 
+  dplyr::left_join(V, by="t") %>% 
+  dplyr::arrange(t, i, j)
 # generate error
 e <- evd::rgumbel(nrow(df))
 head(e)
@@ -93,10 +96,9 @@ head(df)
 
 ```{r}
 # compute share
-library(Economics)  
 df_choice <- Economics::compute_choice(X, M, V, e, beta, sigma, mu, omega)    
 df_share <- Economics::compute_share(X, M, V, e, beta, sigma, mu, omega)  
-save(df_share, file = "output//df_share_A3.RData")
+save(df_share, file = here::here("output//assignment3//df_share_A3.RData"))
 summary(df_choice)
 summary(df_share) 
 ```
@@ -104,7 +106,10 @@ summary(df_share)
 # use linear regression
 
 ```{r}
-lm(y ~ x_1 + x_2 + x_3 + p, data = df_share)
+lm(
+  fomula = y ~ x_1 + x_2 + x_3 + p,
+   data = df_share
+  )
 ```
 
 # do Monte-Carlo simulation
@@ -140,11 +145,11 @@ x_labs <- c(latex2exp::TeX("$\\beta_1$"),
             latex2exp::TeX("$\\sigma_3$"),
             latex2exp::TeX("$\\mu$"), 
             latex2exp::TeX("$\\omega$"))
-library(doParallel)
+library(foreach)
 doParallel::registerDoParallel()
-foreach::foreach(i = 1:8,
-                 .packages = c("dplyr", "ggplot2")
-                 ) %dopar% {
+foreach(i = 1:8,
+        .packages = c("dplyr", "ggplot2")
+        ) %dopar% {
  object_fn <- rep(0,length(t))
  theta_search <- theta
  for (j in 1:length(t)) {
@@ -152,7 +157,7 @@ foreach::foreach(i = 1:8,
    object_fn[j] <- Economics::NLLS_objective_A3(theta_search, df_share, X, M, V_mcmc, e_mcmc)
  }
  df_object <- data.frame(x = theta[i]*t, y = object_fn)
- ggplot2::ggplot(df_object, aes(x,y))+
+ ggplot(df_object, aes(x,y))+
   geom_point()+
   coord_cartesian()+
   labs(x = x_labs[i] , y = "objective function")
@@ -164,9 +169,9 @@ foreach::foreach(i = 1:8,
 ```{r}
 # plot objective function, true shocks
 doParallel::registerDoParallel(8)
-foreach::foreach(i = 1:8, 
-                 .packages = c("dplyr","ggplot2")
-                 ) %dopar% {
+foreach(i = 1:8, 
+         .packages = c("dplyr","ggplot2")
+          ) %dopar% {
  object_fn <- rep(0, length(t))
  theta_search <- theta
  for (j in 1:length(t)) {
@@ -184,9 +189,10 @@ foreach::foreach(i = 1:8,
 # minimize objective function
 
 ```{r}
-NLLS2 <- function(theta2) {Economics::NLLS_objective_A3(theta2, df_share,
-                                             X, M, V_mcmc, e_mcmc)}
-optim_list <- optim(theta, 
+NLLS2 <- function(theta2) {
+  Economics::NLLS_objective_A3(theta2, df_share, X, M, V_mcmc, e_mcmc)
+  }
+optim_list <- optim(par = theta, 
                     fn = NLLS2)
 optim_list
 data.frame(estimate = optim_list$par, true = theta)

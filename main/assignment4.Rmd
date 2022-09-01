@@ -7,7 +7,6 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_knit$set(root.dir = "C:\\Users\\86156\\Economics")
 ```
 
 ## R Markdown
@@ -64,7 +63,7 @@ M <- data.frame(j = rep(1:J, T),
 # transform product data
 
 ```{r}
-library(dplyr)
+library(magrittr)
 # sample product
 Jt <- NA
 MM <- data.frame()
@@ -107,7 +106,6 @@ head(df)
 # compute choice and share
 
 ```{r compute}
-library(Economics)
 u <- Economics::compute_indirect_utility(df, beta, sigma, mu, omega)
 head(u)
 df_choice_smooth <- Economics::compute_choice_smooth(X, M, V, beta, sigma, mu, omega)
@@ -221,21 +219,23 @@ x_labs <- c(latex2exp::TeX("$\\mu$"),
             latex2exp::TeX("$\\sigma_1$"), 
             latex2exp::TeX("$\\sigma_2$"), 
             latex2exp::TeX("$\\sigma_3$"))
-library(doParallel)
+library(foreach)
 doParallel::registerDoParallel()
-foreach::foreach(i = 1:length(theta_nonlinear), 
-                 .packages = c("dplyr","ggplot2")
-                 ) %dopar% {
+foreach(i = 1:length(theta_nonlinear), 
+        .packages = c("dplyr","ggplot2")
+        ) %dopar% {
  objective_fn <- rep(0,length(tm))
  theta_nonlinear_search <- theta_nonlinear
  for (j in 1:length(tm)) {
-   theta_nonlinear_search[i] <- theta_nonlinear[i]*tm[j]
+   theta_nonlinear_search[i] <- 
+     theta_nonlinear[i]*tm[j]
    objective_fn[j] <- 
-     Economics::GMM_objective_A4(theta_nonlinear_search, delta, df_share_smooth, Psi, X, M, V, kappa, lamda)
+     Economics::GMM_objective_A4(theta_nonlinear_search, delta, 
+                                 df_share_smooth, Psi, X, M, V, kappa, lamda)
  }
  df_object <- data.frame(x = theta_nonlinear[i]*tm,
                          y = objective_fn)
- ggplot2::ggplot(df_object, aes(x,y))+
+ggplot(df_object, aes(x,y))+
   geom_point()+
   coord_cartesian()+
   labs(x = x_labs[i] , y = "objective function")
@@ -245,12 +245,14 @@ foreach::foreach(i = 1:length(theta_nonlinear),
 # minimize GMM objective function
 
 ```{r}
-estimate <- optim(par = theta_nonlinear, 
-                  fn = Economics::GMM_objective_A4,
-                  delta = delta,
-                  df_share_smooth = df_share_smooth,
-                  Psi = Psi, X = X, M = M,
-                  V_mcmc = V_mcmc, kappa = kappa, lamda =lamda)
+GMM <- function(theta_nl){
+  Economics::GMM_objective_A4(theta_nl, delta, df_share_smooth, 
+                              Psi, X, M, V_mcmc, kappa, lamda)
+}
+estimate <- optim(
+                  par = theta_nonlinear, 
+                  fn = GMM,
+                  )
 cbind(theta_nonlinear, estimate$par)
 ```
 
