@@ -1,11 +1,14 @@
 
-compute_winning_bids_second <- function(valuation, reserve,T){
+compute_winning_bids_second <- function(valuation, reserve, T){
   record <- NULL
   for (tt in 1:T){
-    val <- valuation[which(valuation[,1] == tt),"x"]
+    val <-
+      valuation %>%
+      dplyr::filter(t == tt) %>%
+      dplyr::select(x)
     t <- tt
     n <- N[tt]
-    m <- sum(valuation[which(valuation[,1] == tt),"x"]>0.2)
+    m <- sum(val > 0.2)
     r <- 0.2
     w <- max(max(val[val != max(val)]),0.2)
     record <- rbind(record,c(t,n,m,r,w))
@@ -14,3 +17,5 @@ compute_winning_bids_second <- function(valuation, reserve,T){
   colnames(record) <- c("t","n","m","r","w")
   return(record)
 }
+
+

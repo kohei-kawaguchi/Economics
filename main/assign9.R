@@ -72,7 +72,7 @@ ggplot2::ggplot(df_first, aes(x = b)) + geom_histogram(fill = "steelblue", alpha
 
 ## 6. compute winning bids from first-price auctions
 df_first_w <-
-  Economics::compute_winning_bids_first(valuation, reserve, alpha, beta,T)
+  Economics::compute_winning_bids_first(valuation, reserve, alpha, beta)
 df_first_w
 
 ggplot2::ggplot(df_first_w, aes(x = w)) + geom_histogram(fill = "steelblue", alpha = 0.8)
@@ -95,7 +95,7 @@ Economics::compute_m0(r, n, alpha, beta)
 ## 2. compute log-likelihood for winning bids from second-price auctions
 
 theta <- c(alpha, beta)
-Economics::compute_loglikelihood_second_price_w(theta, df_second_w,T)
+Economics::compute_loglikelihood_second_price_w(theta, df_second_w, T)
 
 ## 3. Compare the value of objective function around the true parameters
 

@@ -8,3 +8,5 @@ compute_p_first_w <- function(w, r, alpha, beta, n){
   }
   return(ht)
 }
+
+
