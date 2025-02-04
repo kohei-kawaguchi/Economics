@@ -25,8 +25,9 @@ equilibrium
 
 is.list(equilibrium)
 names(equilibrium) %in% c("covariate", "beta", "choice")
-equilibrium %>%
-  purrr::map(dim)
+dim(equilibrium$covariate) == c(num_alternative, num_covariate)
+dim(equilibrium$beta) == c(num_covariate, 1)
+dim(equilibrium$choice) == c(num_simulation, num_alternative)
 
 utility <-
   compute_utility(
