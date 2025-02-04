@@ -11,19 +11,21 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// dummy
-int dummy();
-RcppExport SEXP _Economics_dummy() {
+// compute_utility_rcpp
+Eigen::MatrixXd compute_utility_rcpp(const Eigen::MatrixXd& covariate, const Eigen::VectorXd& beta);
+RcppExport SEXP _Economics_compute_utility_rcpp(SEXP covariateSEXP, SEXP betaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(dummy());
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type covariate(covariateSEXP);
+    Rcpp::traits::input_parameter< const Eigen::VectorXd& >::type beta(betaSEXP);
+    rcpp_result_gen = Rcpp::wrap(compute_utility_rcpp(covariate, beta));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_Economics_dummy", (DL_FUNC) &_Economics_dummy, 0},
+    {"_Economics_compute_utility_rcpp", (DL_FUNC) &_Economics_compute_utility_rcpp, 2},
     {NULL, NULL, 0}
 };
 

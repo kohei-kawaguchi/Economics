@@ -109,4 +109,39 @@ testthat::test_that("simulate_choice generates valid choices", {
   expect_true(
     all(row_sums == 1)
   )
+})
+
+testthat::test_that("compute_utility_rcpp matches compute_utility results", {
+  num_simulation <- 100
+  num_alternative <- 3
+  num_covariate <- 2
+  
+  equilibrium <-
+    make_equilibrium(
+      num_simulation = num_simulation,
+      num_alternative = num_alternative,
+      num_covariate = num_covariate
+    )
+  
+  utility <-
+    compute_utility(
+      covariate = equilibrium$covariate,
+      beta = equilibrium$beta
+    )
+    
+  utility_rcpp <-
+    compute_utility_rcpp(
+      covariate = equilibrium$covariate,
+      beta = equilibrium$beta
+    )
+  
+  expect_equal(
+    utility,
+    utility_rcpp
+  )
+  
+  expect_equal(
+    dim(utility_rcpp),
+    c(num_alternative, 1)
+  )
 }) 

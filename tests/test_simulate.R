@@ -38,6 +38,15 @@ utility
 
 dim(utility) == c(num_alternative, 1)
 
+utility_rcpp <-
+  compute_utility_rcpp(
+    covariate = equilibrium$covariate,
+    beta = equilibrium$beta
+  )
+utility_rcpp
+
+all.equal(utility, utility_rcpp)
+
 choice_probability <-
   compute_choice_probability(
     covariate = equilibrium$covariate,

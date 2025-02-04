@@ -1,7 +1,10 @@
-#include <Rcpp.h>
-using namespace Rcpp;
+#include <RcppEigen.h>
 
 // [[Rcpp::export]]
-int dummy() {
-    return 0;
-} 
+Eigen::MatrixXd compute_utility_rcpp(
+    const Eigen::MatrixXd& covariate,
+    const Eigen::VectorXd& beta
+) {
+    Eigen::MatrixXd utility = covariate * beta;
+    return utility;
+}
