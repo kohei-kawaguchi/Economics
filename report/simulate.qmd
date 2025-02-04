@@ -1,0 +1,60 @@
+---
+title: "Simulation Report"
+author: "Your Name"
+date: today
+format:
+  html:
+    toc: true
+    toc-float: true
+    theme: united
+    highlight-style: tango
+---
+
+# Load Packages
+
+```{r}
+library(ggplot2)
+library(magrittr)
+```
+
+# Load Data
+
+```{r}
+equilibrium <-
+
+  readRDS(
+    file = 
+      "output/simulate/equilibrium.rds" %>%
+      here::here()
+  )
+```
+
+
+# Summarize
+
+```{r}
+equilibrium$choice %>%
+  apply(
+    MARGIN = 2,
+    FUN = mean
+  ) %>%
+  tibble::tibble(
+    frequency = .,
+    choice = 
+      seq_along(frequency)
+  ) %>%
+
+  ggplot(
+    data = .,
+    aes(    
+      x = choice,
+      y = frequency
+    )
+   ) +
+  geom_bar(
+    stat = "identity"
+  ) +
+  theme_classic()
+``` 
+
+
