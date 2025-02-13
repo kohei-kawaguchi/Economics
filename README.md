@@ -1,8 +1,10 @@
 # Economics
 
+## Python Environment
+
 Description of your project goes here.
 
-## Installation
+### Installation
 
 This project uses Poetry for dependency management. To get started:
 
@@ -16,7 +18,7 @@ This project uses Poetry for dependency management. To get started:
    poetry install
    ```
 
-## Usage
+### Usage
 
 You can run the package in several ways:
 
