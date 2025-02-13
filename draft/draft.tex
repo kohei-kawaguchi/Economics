@@ -1,0 +1,720 @@
+% !TEX TS-program = xelatex
+% !TEX TS-options = -synctex=1
+
+\documentclass[12pt]{article}
+
+\usepackage{amssymb,amsmath, amsfonts,eurosym,geometry,ulem,graphicx,caption,subcaption,color,setspace,sectsty,comment,footmisc,natbib,pdflscape,array,hyperref, mathtools,bbm, longtable}
+
+
+% \usepackage[nomarkers,notablist,nofiglist]{endfloat}
+\usepackage{threeparttable}
+\usepackage{adjustbox}
+\usepackage{booktabs}
+\usepackage{tikz}
+% \renewcommand{\efloatseparator}{\medskip}
+\usepackage{fancyhdr}
+\usepackage[ruled, vlined]{algorithm2e}
+\include{pythonlisting}
+\usepackage{float}
+\usepackage{appendix}
+\normalem
+
+% \onehalfspacing
+% \newtheorem{theorem}{Theorem}
+% \newtheorem{corollary}[theorem]{Corollary}
+% \newtheorem{prop}{Proposition}
+% \newenvironment{proof}[1][Proof]{\noindent\textbf{#1.}}{\ \rule{0.5em}{0.5em}}
+
+% \newtheorem{hyp}{Hypothesis}
+% \newtheorem{subhyp}{Hypothesis}[hyp]
+% \renewcommand{\thesubhyp}{\thehyp\alph{subhyp}}
+\usepackage{amsthm}
+\onehalfspacing
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{prop}{Proposition}
+\newtheorem{hyp}{Hypothesis}
+\newtheorem{subhyp}{Hypothesis}[hyp]
+\renewcommand{\thesubhyp}{\thehyp\alph{subhyp}}
+
+\newcommand{\red}[1]{{\color{red} #1}}
+\newcommand{\blue}[1]{{\color{blue} #1}}
+
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\arraybackslash\hspace{0pt}}m{#1}}
+
+\geometry{left=1.0in,right=1.0in,top=1.0in,bottom=1.0in}
+
+\begin{document}
+\begin{titlepage}
+\title{When is Minimum/Maximum RPM Pro-Competitive?: Demand Uncertainty and Retailer Competition\thanks{Keywords: Resale price maintenance; Return policy; Agency model; Wholesale model; Vertical relationship; Antitrust law; Demand uncertainty; Inventory; Product variety; Publishing industry; Book stores. JEL Codes: L11; L13; L42; L81; L82; M31; K21. We use data provided by one of the book wholesalers in Japan. We did not receive any financial support from them. Before the data was provided, we had a contract that prohibits the data provider from intervening in the editorial process. The views expressed herein are entirely those of the authors and should not be purported to reflect those of the U.S. Department of Justice or the data provider. }}
+% \title{Competitive Effects of Resale Price Maintenance\\ in the Japanese Publishing Industry\thanks{Keywords: Resale price maintenance; Return policy; Vertical relationship; Antitrust law; Demand uncertainty; Inventory; Product variety; Publishing industry; Book stores. JEL Codes: L11; L13; L42; L81; L82; M31; K21.}}
+\author{
+Kohei Kawaguchi\thanks{Department of Economics, School of Business and Management, Hong Kong University of Science and Technology. e-mail: kkawaguchi@ust.hk}
+ \and Jeff Qiu\thanks{University of Guelph. e-mail: yinjiaqiu@gmail.com} 
+\and Yi Zhang\thanks{Department of Economics, School of Business and Management, Hong Kong University of Science and Technology. e-mail: yzhangil@connect.ust.hk}}
+% \author{Kohei Kawaguchi\thanks{Department of Economics, School of Business and Management, Hong Kong University of Science and Technology. e-mail: kkawaguchi@ust.hk} \and Yi Zhang\thanks{Department of Economics, School of Business and Management, Hong Kong University of Science and Technology. e-mail: yzhangil@connect.ust.hk}}
+\date{\today}
+\maketitle
+\begin{abstract}
+\noindent
+This paper analyzes how retailer competition affects the welfare implications of resale price maintenance (RPM) under demand uncertainty. We extend the classic model of \cite{deneckereDemandUncertaintyPrice1997} by introducing imperfect competition among retailers, which creates tension between double marginalization and business-stealing effects. Our analysis reveals four distinct regimes determined by demand uncertainty and market concentration. In highly uncertain, competitive markets, minimum RPM enhances efficiency by encouraging inventory holding. However, in markets with lower uncertainty or more concentrated retail sectors, maximum RPM better promotes competition by mitigating double marginalization. The effectiveness of each RPM type depends on whether retailers optimize for all demand states or focus primarily on high-demand scenarios. These findings suggest that antitrust authorities should evaluate RPM cases by considering both the level of demand uncertainty and the degree of retail competition, as different market conditions may call for different forms of vertical price restrictions.
+\bigskip
+\end{abstract}
+\setcounter{page}{0}
+\thispagestyle{empty}
+\end{titlepage}
+\pagebreak \newpage
+
+\section{Introduction}
+
+
+\cite{deneckereDemandUncertaintyPrice1997} and \cite{deneckereDemandUncertaintyPrice1997} argue that minimum resale price maintenance (RPM) can promote competition under demand uncertainty by incentivizing retailers to hold sufficient inventory, which in turn lowers retail prices when demand turns out to be high. In the absence of RPM, retailers may be reluctant to stock adequate inventory due to the risk of fire sales in low-demand scenarios. However, this rationale weakens when demand uncertainty becomes too high, as retailers focus less on low-demand outcomes when making inventory decisions. Moreover, the original argument is based on the assumption of perfectly competitive retailers, where the business-stealing effect from price cuts is maximized.
+
+This paper investigates how the original argument evolves when the spectrum of retailer competition extends from perfect competition to monopoly. By relaxing the assumption of perfectly competitive retailers, we analyze how varying degrees of market power influence inventory decisions and the effectiveness of minimum resale price maintenance (RPM) under demand uncertainty. In settings with imperfect competition, an additional externality—the double-marginalization effect between retailers and the publisher—emerges \citep{tiroleTheoryIndustrialOrganization1988, kleinDistributionRestrictionsOperate1999, blairWillKhanFoster1999}. Furthermore, the reduction in total sales caused by retailers' market power diminishes the effective demand uncertainty faced by the publisher. We identify the threshold of retailer competitiveness at which the minimum RPM ceases to generate pro-competitive effects.
+
+In conclusion, we demonstrate that the industry operates under four distinct regimes: all-states-focused or high-state-focused scenarios, each further divided into competitive or concentrated market structures. Our analysis reveals that minimum RPM is pro-competitive only in the all-states-focused-competitive regime, while maximum RPM fosters competition in the remaining regimes. These findings offer practical guidance for antitrust authorities in assessing the potential pro-competitive effects of minimum and maximum RPM based on the level of demand uncertainty and the degree of retailer competitiveness in the industry.
+
+The extension of \cite{deneckereDemandUncertaintyPrice1997} and \cite{deneckereDemandUncertaintyPrice1997} has been considered in several dimensions. Among others, \cite{wangResalePriceMaintenance2004} generalized \cite{deneckereDemandUncertaintyPrice1997} and \cite{deneckereDemandUncertaintyPrice1997} by considering an oligopoly to the upstream publishers. Our paper differs from it in considering the range of imperfect competition among retailers.
+
+
+\section{Model}\label{sec:linear_demand_model}
+
+We compare the equilibria between a vertically integrated model and a wholesale model with demand uncertainty. By comparison, we illustrate that, under the wholesale model, the retail prices could be higher or lower than the retail prices set in the vertically integrated model due to two effects: the double marginalization effect and the business stealing effect, which hurt the publisher and the consumers. 
+
+This comparison helps us understand the role of maximum and minimum RPM. The optimal maximum RPM constrains the retail price if and only if the wholesale retail price is higher than the vertically-integrated retail price. The optimal minimum RPM also constrains the retail price if and only if the wholesale retail price is lower than the vertically-integrated retail price.
+
+Suppose there are a risk-neutral publisher and $n \geq 2$ symmetric retailers who sell the publisher's product to the consumers. The demand for the product is uncertain and is given by
+\begin{equation}
+ \  D (p, \ \theta)=
+\begin{cases}
+ 1-p,  & \text{with probability  $\frac{1}{2}$}\\
+ \theta(1-p), & \text{with probability $\frac{1}{2}$ }, \text{and} \ \theta > 1.
+ \end{cases}
+\end{equation}
+The cost of production is normalized to zero.
+
+\subsection{Vertically-Integrated Case} As the benchmark, we consider a vertically-integrated industry. A vertically-integrated publisher has to choose an inventory before demand realization but can set an optimal price for every state. 
+Given that the marginal production cost is zero, the optimal inventory (delivery) choice is $d = \frac{\theta}{2}$, in which case it can earn monopoly profits in both demand states.  Accordingly, the price is $p_{H} = p_{L} = \frac{1}{2}$ for both states, and sell quantity $Q_{L} = \frac{1}{2}$ in the low demand state and quantity $Q_{H} = \frac{\theta}{2}$ in the high demand state. 
+
+The expected producer surplus is $\frac{1 + \theta}{8}$, and the expected consumer surplus is $ \frac{1 + \theta}{16}$.
+
+Use the superscript $M$ to denote the equilibrium in the vertically-integrated case. In summary, in the vertically integrated case, we have:
+\begin{itemize}
+\item Delivery $D^M = \frac{\theta}{2}.$
+\item Price $p_{H}^{M} = p_{L}^{M} = \frac{1}{2}$.
+\item Quantity sold $Q_{H}^{M} = \frac{\theta}{2}$, $Q_{L}^{M} = \frac{1}{2}$.
+\item Expected producer surplus PS = $\frac{1 + \theta}{8}$ and expected consumer surplus CS = $ \frac{1 + \theta}{16}$.
+
+\end{itemize}
+
+\subsection{Wholesale Case}
+
+Now, we consider the wholesale model. Each retailer is indexed by $i$. In the wholesale model, before the demand is realized, the publisher first sets the wholesale price $p^w$, and then the retailers choose their inventory $d_i$. Finally, after the demand is realized, the retailers set the retail price.
+
+Let $Q$ be the total demand and let $q$ be an individual firm's demand,  to consider the oligopoly retailer feature in the wholesale model, we rewrite the demand function as the inverse demand function as
+\begin{equation}
+	\  p =
+	\begin{cases}
+		1-Q,  & \text{with probability  $\frac{1}{2}$}\\
+		1-\frac{Q}{\theta}, & \text{with probability $\frac{1}{2}$ }, \text{and} \ \theta > 1.
+	\end{cases}
+\end{equation}
+For firm $i$, the inverse demand function can be written as 
+
+\begin{equation}
+	\  p =
+	\begin{cases}
+		1-(q_i + q_{-i}),  & \text{with probability  $\frac{1}{2}$}\\
+		1-\frac{(q_i + q_{-i})}{\theta}, & \text{with probability $\frac{1}{2}$ }, \text{and} \ \theta > 1.
+	\end{cases}
+\end{equation}
+
+We derive the equilibrium backward, starting from the retailers' price-setting problem.
+
+
+\subsubsection{Retailers' Price-Setting Problem}\label{sec:retailer_price_setting}
+After the demand is realized, the retailers set a price given the delivery chosen before the demand realization. In this stage, the wholesale price is sunk. 
+
+We start by characterizing the unrestricted second-stage decision, which obtains the quantity sold under the oligopoly competition in our model without any delivery restriction. Let $q_{H}^{UR}$ and $q_{L}^{UR}$ denote this quantity in the high-demand state and low-demand state, respectively, and let $d_i$ denote the delivery by retailer $i$ decided before the demand is realized. Note that whenever we have $d^{O} \geq q_{H}^{UR}$, the retailers withhold extra delivery and sell $q_{H}^{UR}$, and whenever $d_i < q_{H}^{UR}$, the price is set up to the point such that all delivery is sold. The same analysis applies to the low-demand state.
+
+
+If there is no restriction by delivery and given that the wholesale price is sunk cost in the second stage. the optimal quantity sold should solve the following maximization problem
+
+\begin{equation}
+\max_{q_i} q_i\left[1 -\frac{(q_i + q_{-i})}{\theta}\right].
+\end{equation}
+
+Given that retailers are symmetric, we have $q_{-i} = (n - 1)q_{i}$. It is easily solved that the optimal quantity to be $q_{H}^{UR} = \frac{\theta}{n + 1}$, and price to be $p_{H}^{UR} = \frac{1}{n+1}$. The total quantity $Q_{H}^{UR} = \frac{\theta n}{n + 1}$. Similarly, in the low-demand state, the second state optimal quantity is 
+ $q_{L}^{UR} = \frac{1}{n + 1}$, and price to be $p_{L}^{UR} = \frac{1}{n+1}$. The total quantity $Q_{L}^{UR} = \frac{n}{n + 1}$.
+
+% Use the superscript $UR$ to denote the equilibrium in the unrestricted case. In summe, if without any restriction, in the second-stage, we have
+% \begin{itemize}
+% \item Price $p_{H}^{UR} = p_{L}^{UR} = \frac{1}{n + 1}$.
+% \item Quantity sold $q_{H}^{UR} = \frac{\theta}{N + 1}$, $q_{L}^{UR} = \frac{1}{n + 1}$.
+% \item Quantity sold $Q_{H}^{UR} = \frac{\theta n}{n + 1}$, $Q_{L}^{UR} = \frac{n}{n + 1}$.
+% \end{itemize}
+
+With the $q_{H}^{UR}$ and $q_{L}^{UR}$ above, we can characterize the restricted price setting given delivery $d^i$ as follows.
+\begin{enumerate}
+    \item First, if delivery $d^{i} \geq q_{H}^{UR}$, the retailers sell  $q_{H}^{UR}$ at the price  $p_{H}^{UR}$ in the high-demand state,  and sell $q_{L}^{UR}$ at the price $p_{L}^{UR}$ in the low demand state. 
+    \item Second, if delivery $ q_{L}^{UR} < d^{i} < q_{H}^{UR}$, in the high demand state, the retailer $i$ sells $d_i$ by setting a price $p = 1 - \frac{(d_i + d_{-i})}{\theta}$, and sell $q_{L}^{UR}$ at the price $p_{L}^{UR}$ in the low demand state.
+    \item Finally, if $d^{i} \leq q_{L}^{UR}$, the retailer sells $d_i$ in both the high- and low-demand states by setting the retail price $p = 1 - \frac{(d_i + d_{-i})}{\theta}$ and $p = 1 - (d_i + d_{-i})$, respectively. 
+\end{enumerate}
+
+\subsubsection{Retailer's Delivery Decision}
+Before the demand is realized, given that the wholesale price is $p^w$, the optimal delivery decision is characterized by the following. 
+
+% \paragraph{When $p^w = 0$}
+% Firstly, if $p^w$ = 0, the optimal delivery is equal to the optimal quantity sold in the high-demand state  $d^{O} = q_{H}^{UR}$, so that the oligopoly profits are achieved in both states. We can compare this quantity with the vertically-integrated case.
+
+% In the high demand state, we have
+% \begin{equation}
+%     Q_{H}^{UR} = nq_{H}^{UR} = \frac{n \theta}{n + 1} > \frac{\theta}{2} = Q_{H}^{M},
+% \end{equation}
+% and 
+% \begin{equation}
+%     p_{H}^{UR}  = \frac{\theta}{n + 1} < \frac{1}{2} = p_{H}^{M}.
+% \end{equation}
+
+% Similarly, in the low demand state, we have
+
+% \begin{equation}
+%     Q_{L}^{UR} = nq_{L}^{UR} = \frac{n }{n + 1} > \frac{1}{2} = Q_{L}^{M},
+% \end{equation}
+% and 
+% \begin{equation}
+%     p_{L}^{UR}  = \frac{1}{n + 1} < \frac{1}{2} = p_{L}^{M}.
+% \end{equation}
+
+% When $p^w = 0$, the oligopoly retailers order more and sell more in both the demand states, then the monopoly quantity a vertically-integrated publisher would sell. Because of the competition, they are unable to withhold inventory in the second-stage. As $n$ increases, the competition is more fierce, and the quantity sold by the retailers are further away from the monopoly one.  
+
+
+
+
+ The optimal delivery should be less than $q^{UR}_H$ whenever $p^w > 0$. Therefore, the retailers are comparing choosing delivery between $ q_{L} ^{UR}\leq d^{i} < q_{H}^{UR}$ and $d^{i} \leq q_{L}^{UR}$. 
+
+When $ q_{L} ^{UR}\leq d^{i} < q_{H}^{UR}$, the second case in the retailer-price-setting characterization is achieved,  so the retailer solves
+\begin{equation}
+	\underbrace{\frac{1}{2}d_i\left[1-\frac{(d_i + d_{-i})}{\theta}\right]}_{\text{restricted profits in the high demand state}} - p^w d_i + \underbrace{\frac{1}{2}\frac{n}{(n+1)^2}}_\text{unrestricted profits in the high demand state}
+\end{equation}
+By taking the FOC, we obtain the optimal delivery $\hat{d}^O = \frac{(1 - 2p^w)\theta}{n + 1}$. To make it a valid optimal, we also need it to fall between the threshold $ q_{L} ^{UR}\leq \hat{d}^{O} < q_{H}^{UR}$, so we have
+\begin{equation}
+\hat{d}^O \geq q_{L}^{UR} \iff \theta > \frac{1}{1 - 2p^w},
+\end{equation}
+which depends on $p^w$ and $\theta$. Because, in this case, the optimal delivery only responds to the high-demand state profit, we call this case the \textit{high-state-focused case}. 
+
+On the other hand, if $d^{i} \leq q_{L}^{UR}$, the final case in the retailer-price-setting characterization is achieved, the retailer solves
+
+\begin{equation}
+	\frac{1}{2}d_i\left[1 -\frac{(d_i + d_{-i})}{\theta}\right] +	\frac{1}{2}d_i\left[1 -(d_i + d_{-i})\right] - p^w d_i.
+\end{equation}
+We obtain the optimal delivery  $\tilde{d}^O = \frac{2(1 - p^w)\theta}{(n + 1)(1 + \theta)}$. For it to be a valid optimum, we need  $\tilde{d}^O \leq q_{L}^{UR}$. That is 
+\begin{equation}
+    \tilde{d}^O \leq q_{L}^{UR} \iff \theta > \frac{1}{1 + 2p^w},
+\end{equation}
+which is always satisfied given $p^w > 0$. Since in this case, the optimal delivery decision is responding to the profits in both the high- and low-demand states, we call this case the \textit{all-states-focused case}. 
+
+Note that whenever the high-state-focused case $\tilde{d}^{O}$ is achieved, the retailer will choose it because we have
+\begin{equation}
+\Pi_{\hat{d}^o} - \Pi_{\tilde{d}^o} = \frac{(1-2p^w)^2 + 1)}{2(1+n)^2} - \frac{4(1-p^w)^2\theta}{2(n+1)^2(1+\theta)} = \frac{[\theta(1 - 2p^w) - 1]^2}{(2(n+1)^2(1+\theta)} \geq 0
+\end{equation}
+
+
+In summary, if $\theta > \frac{1}{1 - 2p^w}$, that is, when the high-demand state and low-demand state are different enough, the high-state-focused case is achieved ($d_{i} = \hat{d}^{O}$).  Otherwise, the all-states-focused state is achieved ($d_{i} = \tilde{d}^{O}$).
+
+\subsubsection{Wholesalers' Wholesale-Price-Setting Problem}
+Fixing $\theta$, the wholesale price will affect the delivery decision by affecting whether they want to be high-state-focused or all-states-focused.
+
+If high-state-focused, the optimal wholesale price solves 
+\begin{equation}
+\max_{p^w} p^w \frac{(1 - 2p^w)\theta n}{n + 1},
+\end{equation}
+where the optimal is given by $p^w = \frac{1}{4}$,
+and earns a profit $\frac{\theta n}{8(n+1)}$.
+
+If all-states-focused, the optimal wholesale price solves 
+\begin{equation}
+\max_{p^w} p^w \frac{2(1 - p^w)\theta n}{(n + 1)(1 + \theta)},
+\end{equation}
+where the optimal is given by $p^w = \frac{1}{2}$,
+and earns a profit $\frac{\theta n}{2(n+1)(1+\theta)}$.
+
+If $\theta \geq 3$, we have the wholesaler profit $\frac{\theta}{8(n+1)} \geq \frac{\theta}{2(n+1)(1+\theta)}$. The wholesaler prefer the first case than the second case. Meanwhile, if the wholesaler sets the optimal wholesale price at $p^w = \frac{1}{4}$, we have $\theta > \frac{1}{1- 2p^w} = 2$. 
+So the wholesaler can indeed trigger the delivery they want by setting $p^w = \frac{1}{4}$. Otherwise, the wholesaler sets $p^w = \frac{1}{2}$.
+
+We summarize the equilibrium in the wholesale model in the following subsection.
+
+
+
+\subsubsection{Summary of the Wholesale Model Equilibrium} 
+When $\theta \geq 3$, the high-state-focused case is achieved as follows
+\begin{itemize}
+	\item The wholesaler price  $ p_w = \frac{1}{4}$. 
+	\item The delivery is $d^O = \frac{\theta}{2(n + 1)}$. Total delivery $D^O = \frac{\theta n}{2(n + 1)}$. 
+	\item Price $p_{H}^O = 1 - \frac{n}{2(n+1)}$ and $p_{L}^O = \frac{1}{(n+1)}$. 
+	\item Expected consumer surplus $\frac{1}{16}\frac{\theta n^2}{(n + 1)^2} + \frac{1}{4}\frac{n^2}{(n + 1)^2}$. 
+	\item The expected (total) retailer surplus is $\frac{1}{2}\frac{n(\theta + 4)}{4(n + 1)^2}$. 
+	\item The surplus for the wholesaler is $\frac{1}{4}\frac{\theta n}{2(n + 1)}$.
+\end{itemize}    
+
+
+
+When $\theta < 3$, the all-states-focused case is achieved as follows
+\begin{itemize}
+	\item The wholesaler price $ p_w = \frac{1}{2}$. 
+	\item The delivery $d^O = \frac{\theta}{(n + 1)(1+ \theta)}$. Total delivery $D^O = \frac{\theta n}{(n + 1)(1+ \theta)}$.
+	\item The prices $p_{H}^O = 1 - \frac{n}{(n+1)(1+\theta)}$ and $p_{L}^O = 1 - \frac{\theta n}{(n + 1)(1+ \theta)}$.  
+	\item The expected consumer surplus $\frac{1}{4} \frac{n^2\theta}{(n + 1)^2(1 + \theta)}$. 
+	\item The expected (total) retailer profit is $\frac{1}{2}\frac{\theta n}{(n+1)^2(1 + \theta)} $. 
+	\item The surplus for the wholesaler is $\frac{1}{2}\frac{\theta n}{(n + 1)(1+ \theta)}$.
+\end{itemize}
+
+
+% Note that our model converges to Deneckere's model as $n$ goes to infinity, where the retailer market is perfectly competitive.
+
+
+
+
+\subsection{Comparison with Vertical-Integration and Welfare Implications}\label{sec:welfare_implication_wholesale_vi}
+
+As mentioned above, based on the different equilibrium results achieved, we can divide the equilibrium under the wholesale model into the high-state-focused case ($\theta \geq 3$) and the all-states-focused case ($\theta$ < 3). 
+
+Within the above two states, we can further divide them based on the market's competitiveness because it affects the welfare implication. Changing from the vertically integrated model to the wholesale model, two effects could work. The first is the double marginalization effect caused by successive monopoly power. The double markup leads to a higher price and lower delivery. The second is the business-stealing effect caused by competitive retailers' tendency to undercut rivals' prices and steal business from them. The competitive case is where the business-stealing effects dominate and the concentrated case is where the double-marginalization effects dominate.
+
+In the following, we summarize how the two effects affect welfare under the four equilibrium cases we defined. We show that business-stealing effects can reduce delivery and hurt consumers in the all-states-focused-competitive case. \cite{deneckereDemandUncertaintyInventories1996} and \cite{deneckereDemandUncertaintyPrice1997} are the extreme cases belonging to the competitive case.
+
+\subsubsection{High-state-focused case}
+
+\paragraph{High-state-focused-competitive case}
+The high-state-focused-competitive case is when $\theta \geq 3$ and $n \geq \frac{(1+\theta) + \sqrt{(1+\theta)(\theta + 4)}}{3}$. The criteria for the division of the number of retailers $n$ is derived by having the consumer welfare be higher under the wholesale model than the vertical-integration model
+\begin{equation}
+	\frac{1}{16}\frac{\theta n^2}{(n + 1)^2} + \frac{1}{4}\frac{n^2}{(n + 1)^2} \geq \frac{1 + \theta}{16} \equiv n \geq \frac{(1+\theta) + \sqrt{(1+\theta)(\theta + 4)}}{3}.
+\end{equation}
+
+In this case, the delivery is reduced as we have $D^O = \frac{\theta n}{2(n + 1)} \leq D^M = \frac{\theta}{2}$. This reduction is only due to the double marginalization effect. To see why this is the case, note that as $n$ goes to infinity where double marginalization diminishes, we have $D^O =  D^M = \frac{\theta}{2}$, and there is no reduction. 
+For the retail prices, we have $p^O_{H} \geq p^M_{H}$ and $p^O_{L} < p^M_{L}$. The former is driven by the double marginalization effect and the latter by the business-stealing effect. Although the business-stealing effect happens, it only drives down the retail price in the low-demand state but does not reduce the delivery because, in this case, the optimal delivery decision only responds to profit in the high-demand state. 
+
+In this case, the wholesaler's profit is decreased by both effects because the delivery and retail prices deviate from the vertical-integration ones. In such a competitive case, the business-stealing effects dominate. Therefore, the consumer surplus will increase because the gain from a lower retail price in the low-demand states exceeds the loss from a higher retail price in the high-demand states.
+
+
+
+\paragraph{High-state-focused-concentrated case}
+The high-state-focused-concentrated case is when $\theta \geq 3$ and $n < \frac{2(1+\theta) + \sqrt{4(1+\theta)(2 + \theta)}}{6}$. In this case, the analyses on $D^O, p^O_{H}$ $p^O_{L}$, and the wholesaler's profit are completely the same as those in the high-state-focused-competitive case. The only difference is the consumer surplus. Since we now have a concentrated retailer market, the double marginalization effect dominates. Therefore,  the consumer surplus will also be decreased because the gain from a lower retail price in the low-demand states can not compensate for the loss from a higher retail price in the high-demand states.
+
+\subsubsection{all-states-focused case}
+
+\paragraph{all-states-focused-competitive case}
+The all-states-focused-competitive case is when $\theta < 3$ and $n \geq \frac{\theta + 1}{\theta - 1}$.  The criteria for the division of the number of retailers $n$ is derived by having the retail price under the wholesale model in the low-demand state be lower than that under the vertical-integration model
+\begin{equation}
+	p_{L}^O = 1 - \frac{\theta n}{(n + 1)(1+ \theta)} \leq \frac{1}{2} \iff n \geq \frac{\theta + 1}{\theta - 1}.
+\end{equation}
+In this case, the delivery is reduced by both the double-marginalization effect and the business-stealing effect. We have $D^O = \frac{\theta n}{(n + 1)(1+ \theta)} \leq D^M = \frac{\theta}{2}$. And as $n$ goes to infinity, the delivery is still lower than the vertical-integration case because of the business-stealing effects. 
+
+We have the retail price $p^O_{H} \geq p^M_{H}$, driven by both the double marginalization and the business-stealing effect. Meanwhile, we have $p^O_{L} \leq p^M_{L}$ (decided by the competitiveness condition  $n \geq \frac{\theta + 1}{\theta - 1}$), driven by the business-stealing effect. 
+
+In this case, both effects decrease the wholesaler's profit again because the delivery and retail prices deviate from the vertical integration ones. However, unlike in the high-state-focused case, the business-stealing effect does not benefit consumers because it leads to a decrease in delivery and an increase in the high-state retail prices, while its effect in decreasing the low-state retail prices is too small to compensate for the loss. Therefore,  in this case, both the double marginalization and business-stealing effects decrease consumer surplus.
+
+
+
+\paragraph{all-states-focused-concentrated case}
+The all-states-focused-competitive case is when $\theta < 3$ and $n < \frac{\theta + 1}{\theta - 1}$. In this case, only the double marginalization effect decreases delivery, increases retail prices in both the high- and low-demand states, decreases the wholesaler's profit and decreases the consumer surplus. 
+
+
+
+
+% Overall, the wholesaler's profit decreased due to both effects.
+
+% In this case, the wholesaler can use minimum RPM to increase profits by increasing the price in the low-demand state. It can also use maximum RPM to decrease the price in the high-demand state and increase profits.  
+
+
+
+% \paragraph{wholesaler's profit}
+% The maximum RPM works for the price in the high-demand state. Whether the maximum or minimum RPM works for the low-demand state is dependent on the number of retailers $n$. If $p^O_{L} \leq \frac{1}{2}$, then only minimum RPM works for the low-demand state. Otherwise, only maximum RPM works for the high-demand state. The number of $n$ needed for minimum RPM to work depends on the demand uncertainty level. For example, if in the extreme case $\theta = 3$, we need $n$ to be at least 2 for minimum RPM to work. On the other hand, if $\theta = \frac{3}{2}$, we need $n$ to be at least 5 for minimum RPM to work. The lower the demand uncertainty, the higher level of competition we need for minimum RPM to work. 
+
+
+% \paragraph{Consumer surplus}
+
+%   When $\theta \geq 3$, the consumer surplus will not be increased by using the minimum RPM (but only decreased). However, consumer surplus will be increased by using the maximum RPM. To see this, we consider the perfectly competitive case when $n$ goes to infinity, eliminating all the effects of double marginalization. If so, the delivery $D^O$ goes to $\frac{\theta}{2}$, $p_{H}^{O}$ goes to $\frac{1}{2}$, and  $p_{L}^{O}$.
+%  As discussed in Deneckere's paper, By using the minimum RPM, the delivery will not be increased as it is already equal to $D^M$, but the price will increase in the low-demand state, hurting consumer surplus. Consumer surplus will be increased by the maximum RPM by eliminating the double-marginalization issue. 
+
+
+
+
+%   When $\theta < 3$, if we have $p^O_{L} < \frac{1}{2}$ to be satisfied (see the above discussion on the condition),  consumer welfare will be increased by both the maximum RPM and minimum RPM. Otherwise, only the maximum RPM will work to increase consumer surplus.
+\section{Maximum RPM}
+
+Previous results show that when monopoly power and demand uncertainty exist, a wholesale model can hurt social welfare due to externalities imposed by both the double marginalization effect and the competition effect. In what follows, we prove that the wholesaler can reduce or even eliminate these effects by setting price restrictions - either a price ceiling (maximum RPM) or a price floor (minimum RPM). We illustrate the use of maximum RPM in this section and minimum RPM in the section following.
+
+
+
+% This case applies to the high-state-focus and all-states-focused competitive case, where we have the price at the high-demand state to be larger than that in the vertical-integration model, while the price at the low-demand state is not.
+Suppose that under the wholesale model, the wholesaler can set a price ceiling $\bar{p}$ in addition to the wholesale price $ p_w$. With this price ceiling, retailers cannot set any retail price greater than $\bar{p}$, which imposes a restriction on retailers during their price-setting stage.
+
+Previous analysis shows that in all four cases with different demand uncertainty and competition levels, the price set in the high-demand state is always higher than that set in the low-demand state ($p^O_H \geq p^O_L$). Therefore, a non-trivial price ceiling could have two consequences: binding only in the high-demand state or binding in both demand states.
+In section \ref{sec:welfare_implication_wholesale_vi}, we show that in the high-state-focused-competitive case, high-state-focused-concentrated case, and all-states-focused-competitive case, the retail prices in the high-demand state are higher than those in the vertically-integrated case, while the retail prices in the low-demand states are lower. Therefore, the wholesaler is incentivized to set a price ceiling that binds only in the high-demand state under these three cases. On the other hand, in the all-states-focused-concentrated case, the retail prices are higher than the vertically-integrated case in both the high and low demand states. Therefore, the wholesaler is incentivized to set a price ceiling that binds in both states under this case.
+
+In what follows, we analyze the wholesaler's optimal choice of price ceiling and its implications for welfare.
+
+\subsection{Binding Only in High Demand State}
+
+In this subsection, we analyze the case where the wholesaler sets a price ceiling that binds only in high-demand states, which corresponds to the high-state-focused-competitive, high-state-focused-concentrated, and all-states-focused-competitive cases.
+
+When setting prices, retailers will optimally set their price equal to the price ceiling in high-demand states since the ceiling is binding. For low-demand states, price-setting follows the analysis presented in Section \ref{sec:retailer_price_setting}.
+
+Given the price setting, we now analyze the retailer's delivery decision under the price ceiling. In high-demand states, the binding price ceiling indicates that delivery is too low. To meet the price ceiling, retailers must increase delivery until the price in the high-demand state equals the ceiling price. Specifically, the total delivery must satisfy:
+\begin{equation}
+	\bar{p} = \left[1 - \frac{D^{max}}{\theta}\right],
+\end{equation}
+and by symmetric equilibrium, the delivery is:
+\begin{equation}
+	d^{max} = \frac{\theta(1 - \bar{p})}{n}.
+\end{equation}
+This optimal delivery decision holds if retailers earn positive profits at this delivery level. If profits would be negative, the optimal delivery becomes $D^{max} = d^{max} = 0$.
+
+
+Given the retailer's best response, we now analyze the wholesaler's optimal choice of wholesale price and price floor. The wholesaler aims to maximize profit while ensuring retailers have sufficient incentive to participate (i.e., not choose zero delivery).
+
+For any individual firm, let $\mathbbm{1}^{UR}$ be an indicator variable that equals 1 if the equilibrium delivery $d^*$ exceeds the optimal quantity sold in the low demand state without delivery restrictions (previously denoted as $q^{UR}_L$). The equilibrium profit for firm i is then:
+\begin{equation}
+	\pi = \frac{1}{2}d^{max}\bar{p} -  p_wd^{max}
+	+ \mathbbm{1}^{UR}\frac{1}{2}\frac{1}{(1 + n)^2} + (1 - \mathbbm{1}^{UR})\frac{1}{2}(1 - nd^{max})d^{max}.
+\end{equation}
+
+The value of $\mathbbm{1}^{UR}$ depends on the wholesaler's choice of $\bar{p}$ (and consequently $d^{max}$, which is a function of $\bar{p}$). We proceed using a guess-and-verify approach by assuming $\mathbbm{1}^{UR} = 1$, and then show that the optimal choice of $\bar{p}$ is indeed consistent with this assumption.
+
+To satisfy the participation constraint for firms, the wholesaler must ensure that each firm's profit is non-negative. This requirement can be expressed as $\pi_i \geq 0$, implying:
+\begin{equation}
+	\begin{aligned}
+		p_wd^*_i &\leq  \frac{1}{2}d^{max}\bar{p} + \frac{1}{2}\frac{1}{(n + 1)^2}\\
+		&= \frac{1}{2}\frac{\theta(1 - \bar{p})}{n}\bar{p} + \frac{1}{2}\frac{1}{(n + 1)^2}.
+	\end{aligned}
+\end{equation}
+
+Note that the LHS is proportional to the wholesaler's profit $n  p_w d^{max}$. Therefore, to maximize profit, the wholesaler first sets a price ceiling $\bar{p}$ that maximizes the RHS, and then sets a wholesale price $ p_w$ that makes the LHS equal to the RHS.
+
+The RHS achieves its maximum when $\bar{p} = \frac{1}{2}$. At this price ceiling, each retailer's delivery is $d^{max} = \frac{\theta}{2n}$, which exceeds the no-delivery restriction quantity $q^{UR}_L = \frac{1}{1 + n}$. This verifies our assumption that $\mathbbm{1}^{UR} = 1$. \footnote{This can be shown mathematically:
+	\begin{equation}
+		\begin{aligned}
+			& \frac{\theta}{2n} - \frac{1}{n + 1} > 0 \\
+			& \iff \theta > \frac{2n}{n + 1},
+		\end{aligned}
+	\end{equation}
+	which holds for all values of $n$ and $\theta$.
+} Given this, we can calculate the optimal wholesale price as $ p_w = \frac{1}{4} + \frac{n^2}{(n + 1)^2}\frac{1}{\theta}$.
+
+Using a similar calculation procedure, we can prove that assuming $\mathbbm{1}^{UR} = 0$ leads to an optimal solution inconsistent with this assumption. The boundary solution will be choosing a price ceiling $\bar{p}$ such that the total delivery is such that $\mathbbm{1}^{UR} = 0$ is just satisfied: $D^* = nq^{UR}_L$, which yields a lower profit than letting $\mathbbm{1}^{UR} = 1$.
+\footnote{
+	When we assume $\mathbbm{1}^{UR} = 0$, the incentive compatibility constraints for firms become $\pi_i \geq 0$, implying:
+	\begin{equation}
+		\begin{aligned}
+			p_wd^{max} &\leq  \frac{1}{2}d^{max}\bar{p} + \frac{1}{2}\frac{n}{(n + 1)^2} \\
+			&= \frac{1}{2}\frac{\theta(1 - \bar{p})}{n}\bar{p} + \frac{1}{2}\frac{\theta(1-\bar{p})}{n}\left[1 - \theta(1 - \bar{p})\right].
+		\end{aligned}
+	\end{equation}
+	
+	The RHS is maximized at $\bar{p} = \frac{1}{1 + \theta}$. Since $\bar{p} \leq \frac{1}{2}$, the equilibrium delivery is even more than the delivery when assuming $\mathbbm{1}^{UR} = 1$. Therefore, we still have $d^{max} = \frac{\theta}{2n} > \frac{1}{n + 1} = q^{UR}_L$ to be true, inconsistent with the assumption.
+} 
+
+Therefore, setting the price ceiling $\bar{p} = \frac{1}{2}$ and the wholesale price $ p_w =\frac{1}{4} + \frac{n^2}{(n + 1)^2}\frac{1}{\theta}$ is the wholesaler's optimal decision is the price ceiling to only bind at the high demand state.  
+
+We summarize the equilibrium and welfare as follows
+\begin{itemize}
+	\item $\bar{p} = \frac{1}{2}$
+	\item The wholesaler price  $ p_w^{max} =\frac{1}{4} + \frac{n^2}{(n + 1)^2}\frac{1}{\theta}$. 
+	\item The delivery is $d^{max} = \frac{\theta}{2n}$. Total delivery $D^{max} = \frac{\theta }{2}$. 
+	\item Price $p^{max}_{H} = \frac{1}{2}$, price $p^{max}_L = \frac{1}{n+ 1}$.
+	\item Expected consumer surplus $\frac{\theta}{16} + \frac{n^2}{4(n + 1)^2}$. 
+	\item The expected (total) retailer surplus is 0. 
+	\item The surplus for the wholesaler $\frac{\theta}{8} + \frac{1}{2}\frac{n}{(n + 1)^2}$
+\end{itemize}    
+
+
+
+\paragraph{Welfare Implications}
+As mentioned previously, in the high-state-focused case (competitive and concentrated) and the all-states-focused competitive case, the wholesalers have the incentive to set a price ceiling binding only in the high-demand state And the optimal price ceiling binding in the high-demand state ($\bar{p} = \frac{1}{2}$) can indeed be applied as in all three cases, the retail prices in the high demand state are higher than $\frac{1}{2}$, while the retail prices in the low demand state are lower. However, whether they will set depends on whether the wholesaler's profit could be improved. Therefore, we discussed in this subsection i) whether the price ceiling will be applied, and ii) If applied, how will the wholesaler profit, retailer profit, and consumer welfare compare with the no-price-ceiling case, and the vertically-integration case. 
+
+We first examine the application in the high-state focused case $(\theta > 3)$, where the expected wholesaler profit, retailer profit, and consumer surplus is  $\frac{1}{4}\frac{\theta n}{n + 1}$, $\frac{1}{2}\frac{\theta + 4}{4(n+1)^2}$, and $\frac{1}{16}\frac{\theta n^2}{(n+1)^2} + \frac{1}{4}\frac{n^2}{(n+1)^2}$, respectively. 
+Under the price ceiling, all the supply surplus is captured by the wholesaler, and the total supply surplus is increased by $\frac{\theta}{8}\frac{1}{(n + 1)^2}$. 
+Therefore, the wholesaler is willing to apply the maximum RPM. The increase in the supply surplus is due to the elimination of the double marginalization effect. We can see that, as the number of retailers $n$ increases, the increase in surplus decreases. The consumer surplus increases by $\frac{\theta}{16}\frac{2n + 1}{(n + 1)^2}$, which also disappear as $n$ increases.
+
+We then examine the both-state-focused-competitive case ($\theta < 3$ and $n > \frac{\theta + 1}{\theta - 1}$), where the expected wholesaler profit, retailer profit, and consumer surplus is  $\frac{1}{2}\frac{\theta n}{(n + 1)(1+\theta)}$, $\frac{1}{2}\frac{\theta n}{(n+1)^2(1+\theta)}$, and $\frac{1}{4}\frac{\theta n^2}{(n+1)^2(1+\theta)}$, respectively. In this case, the wholesaler faces a trade-off when using maximum RPM.  Under the maximum RPM, the retail price in the high-demand state returns to the vertical integration case. Nevertheless, it is at the expense of driving down the price at the low-demand state, which is already lower than the vertical integration case (intensifying the competition effect). Therefore, the wholesaler's profit increases if 
+$\frac{\theta(\theta - 3)n^2 + (2\theta(1+\theta) + 4) + \theta(1+\theta)}{8(n+1)^2(1 + \theta)} > 0$, which is equal to the condition $n \leq \frac{2\theta(1 + \theta) + 4 + \sqrt{[2(\theta(1+\theta) + 4]^2 - 4\theta(\theta - 3)\theta(1+\theta)}}{2\theta(3 - \theta)}$. Take $\theta = 2$ as an example, for the use of maximum RPM to be profitable for the wholesaler under the both-state-competitive case ($n > 2$), it requires that $n \leq 8$. When $n$ is not large, (for the wholesaler) the double marginalization effect outweighs the competition effects. Finally, when the maximum RPM is applied, the consumer welfare always increases by $\frac{\theta}{16} + \frac{1}{\theta + 1}\frac{n^2}{(1+n)^2}$, because a lower price in both the high and low demand states. 
+
+Note that, under the price ceiling, although the price and quantity at the high-demand state return to the levels seen in the vertical integration case, the wholesaler's profit does not, because the chosen price bar leads to too much delivery (from the viewpoint of the wholesaler) in the low-demand state, where it still affected by competition effects. The consumer surplus, however, is higher than the vertical integration case by $\frac{1}{4}\frac{n^2}{(n+1)^2} - \frac{1}{16}$.
+
+
+\subsection{Binding in Both States}
+
+Another case arises when the price ceiling binds at both states. Using similar arguments as in the case where the price ceiling binds only in the high demand state, the equilibrium total delivery should be such that the price at the low-demand state equals the price ceiling:
+\begin{equation}
+	\bar{p} = \left[1 - D^{max}\right].
+\end{equation}
+
+The individual firm's profit in the equilibrium goes as
+\begin{equation}
+	\pi = \frac{1}{2}d^{max}(1 - \frac{nd^{max}}{\theta}) +  \frac{1}{2}d_i(1 - nd^{max}) -  p_wd^{max}.
+\end{equation}
+
+Using similar calculations, we find that the optimal price ceiling is $\bar{p} = \frac{1}{1 + \theta}$, which yields an optimal individual delivery of $d^{max} = \frac{\theta}{n(1+\theta)}$, total delivery of $D = \frac{\theta}{1 + \theta}$, and wholesale price of $ p_w = \frac{1}{2}$.
+
+
+The equilibrium and welfare are summarized below
+\begin{itemize}
+	\item $\bar{p} = \frac{1}{1 + \theta}$
+	\item The wholesaler price  $p^{max}_w =\frac{1}{2}$. 
+	\item The delivery is $d^{max} = \frac{\theta}{n(1+\theta)}$. Total delivery $D^{max} = \frac{\theta}{(1+\theta)}$. 
+	\item Price $p^{max}_{H} = \frac{\theta}{1+\theta}$, price $p^{max}_L = \frac{1}{\theta+ 1}$.
+	\item Expected consumer surplus $\frac{\theta^2}{2(1+\theta)^2}$. 
+	\item The expected (total) retailer surplus is 0. 
+	\item The surplus for the wholesaler $\frac{\theta}{(1+\theta)^2}$
+\end{itemize}    
+
+\paragraph{Welfare Implications} 
+
+In the all-states-focused concentrated case ($\theta > 3$ and $n \leq \frac{\theta + 1}{\theta - 1}$, setting $\bar{p} = \frac{1}{1 + \theta}$ will bind at both states, since both the high- and low-demand state prices exceed $\frac{1}{1+\theta}$.
+As the price ceiling is lower than the optimal retail price under the vertical-integration case, the wholesaler profit is not necessarily increased under the maximum RPM. From without to with maximum RPM, the wholesaler profit changes by $\frac{\theta (n + 2 - \theta n)}{2(n+1)(1 + \theta)^2}$, which is positive if and only if $n < \frac{2}{\theta - 1}$. \footnote{Although the both-state-focused-concentrated case requires $n \leq \frac{\theta + 1}{\theta - 1}$, it does not guarantee a positive profit using maximum RPM.} Therefore, the wholesaler uses the maximum RPM if the above condition is satisfied. It is worthwhile for the wholesaler only if the externality by the double marginalization is large enough.  On the other hand, once the maximum RPM is applied, the consumer welfare is always increased by $\frac{n^2\theta(\theta - 1) + 2\theta^2 + 4n\theta^2}{4(n+1)^2(1+\theta)^2}$, because the decreased retail prices in the both states. 
+
+Whenever the maximum RPM is applied, the wholesaler's profit is smaller than the vertically-integrated case by $\frac{\theta^3 + 3\theta^2 - 5\theta + 1}{8(1 + \theta)^2}$, while the consumer surplus is increased from the vertically-integrated case by $\frac{5\theta^2 - \theta^3 - 3\theta - 1}{16(1+\theta)^2}$. Both the differences increase as $\theta$ increases. 
+
+A remaining question is whether the wholesaler would like to set a price ceiling that binds only in the high-demand states under the both-state-focused concentrated case, which at least partially corrects the externality. The optimal price ceiling derived in the last subsection $\bar{p} = \frac{1}{2}$ is not applied here because retail prices in both states are higher than that, so binding only in the high does not carry on. The wholesaler can at best set a price ceiling equal to the retail price under the low-demand state without a price ceiling $p^O_L$. It is easy to prove that this yields a lower profit than setting a price ceiling $\frac{1}{\theta + 1}$. Therefore, this option will not considered by the wholesaler. 
+
+
+\section{Minimum RPM}
+
+Now, we demonstrate how minimum RPM can eliminate the externality arising from competition effects.
+
+As discussed above, without maximum RPM, the retail price in the low-demand state can only be lower than or equal to the price under vertical integration, and this happens under the high-demand-focused cases (competitive or concentrated) and under the all-states-focused competitive case. Consequently, for the wholesaler, an optimal minimum RPM binds only in the low-demand state. Below, we solve for the optimal price floor that binds exclusively in the low-demand state.
+
+Again, we start with the retailer's price decision. Let $\underline{p}$ denote the price floor. Since by assumption the price floor binds at the low demand state, the optimal retail price in the low demand state equals $\underline{p}$. Furthermore, this implies that retailers carry excess inventory and cannot sell out all their delivery due to the binding price floor. The probability of selling is $\frac{1 - \underline{p}}{D}$, where $D$ is the total delivery by firms.
+
+Given the retail price response, we now examine each firm's delivery decision. Firm $i$'s profit as a function of its own delivery $d_i$ can be written as
+\begin{equation}
+	\frac{1}{2}d_i\left[1 - \frac{D}{\theta}\right] + \frac{1}{2}\frac{(1 - \underline{p})\underline{p}}{D}d_i -  p_wd_i,
+\end{equation}
+where $D = d_i + d_{-i}$.
+
+Taking the first-order condition with respect to $d_i$ and substituting the equilibrium delivery $D^{min} = nd^{min}$ at equilibrium, we obtain the optimal delivery response:
+\begin{equation}\label{eq:retail_profit_price_floor}
+	\begin{aligned}
+		& \frac{1}{2}nd^{min}\left[1 - \frac{(n+1)d^{min}}{\theta}\right] + \frac{1}{2}(1-\underline{p})\underline{p}\frac{n-1}{n} -  p_wnd^{min} = 0 \\
+		& \iff  p_wnd^{min} = \frac{1}{2}nd^{min}\left[1 - \frac{(n+1)d^{min}}{\theta}\right] + \frac{1}{2}(1-\underline{p})\underline{p}\frac{n-1}{n}
+	\end{aligned}
+\end{equation}
+
+Given the firms' best delivery responses, we now turn to the wholesaler's decisions regarding the price floor and wholesale price.
+The LHS of Equation \eqref{eq:retail_profit_price_floor} equals the wholesaler's profit. Therefore, to maximize profit, the wholesaler sets $\underline{p}$ and $ p_w$ to maximize the RHS of Equation \eqref{eq:retail_profit_price_floor}. The RHS reaches its maximum when $\underline{p} = \frac{1}{2}$ and $d^{min} = \frac{\theta}{2(n + 1)}$. To achieve this optimal delivery level, the wholesale price must be set at $ p_w = \frac{1}{4} + \frac{1}{4}\frac{(n - 1)(n + 1)}{n^2\theta}$.
+
+The equilibrium and welfare are summarized below
+\begin{itemize}
+	\item \underline{p} = $\frac{1}{2}$
+	\item The wholesaler price  $ p_w^{min} = \frac{1}{4} + \frac{1}{4}\frac{(n - 1)(n + 1)}{n^2\theta}$ 
+	\item The delivery is $d^{min} = \frac{\theta}{2(n + 1)}$. Total delivery $D^{min} = \frac{\theta n}{2(n + 1)}$. 
+	\item Price $p^{min}_{H} = 1 - \frac{n}{2(n+1)}$, price $p^{min}_L = \frac{1}{2}$.
+	\item Expected consumer surplus $\frac{\theta n^2}{16(n + 1)^2} + \frac{1}{16}$. 
+	\item The expected (total) retailer surplus is $\frac{n\theta}{8(n+1)^2} + \frac{1}{8n}$. 
+	\item The surplus for the wholesaler $\frac{n\theta}{8(n+1)} + \frac{1}{8}\frac{n-1}{n}$.
+\end{itemize}  
+
+\paragraph{Welfare Implications}
+
+In the high-state-focused cases, implementing minimum RPM leaves both delivery quantities and high-demand state prices unchanged. The only effect is an increase in the low-demand state price, which benefits the wholesaler but harms consumers. Therefore, the wholesaler is willing to use the minimum RPM. 
+
+Specifically, the wholesaler profit increases by $\frac{n -1}{8n}$, which increases as the number of firms $n$ increases. This is because as the number of firms increases, the competition hurts the wholesaler more. The retailer profit  decreases by $\frac{n(1 - n)(3n + 1)}{8n^2(1+n)^2}$, while the consumer surplus is also decreased by $\frac{1}{4}\frac{n^2}{(n+1)^2} - \frac{1}{16}$. As the number of firms increases, the retailers' profit decreases less, while consumer welfare drops more.  
+
+
+In contrast, when minimum RPM is applied to the all-states-focused competitive case, it not only increases the retail price in the low-demand state but also leads to increased delivery quantities and consequently lower prices in the high-demand state. The wholesaler's profit increases due to the elimination of the competition externality. Specifically, the wholesaler's profit increases by $\frac{(\theta - 1)^2n^2 - (1+\theta)}{8n(n+1)(1+\theta)}$, which is guaranteed to be positive under the condition for being in the all-states-focused competitive case ($\theta < 3$ and $n > \frac{\theta + 1}{\theta - 1}$), and is increasing as the number of retailers $n$ increases. Therefore, the wholesaler is willing to use the minimum RPM in this case. The retailer profit increases by $\frac{(\theta - 1)^2n^2 + 2(\theta + 1)n + (1 + \theta)}{8n(n+1)^2(1+\theta)}$, which decreases as $n$ increases. Meanwhile, consumer welfare also improved by $\frac{(\theta - 1)^2n^2 + 2(\theta + 1)n + 1 + \theta}{16(n+1)^2(1+ \theta)}$, which is decreasing as the number of retailer $n$ increases. This is because consumers gain from the decreased retail price in the high-demand state, but lose from the increased price in the low-demand states. As competition increases, the loss in the low-demand states increases. 
+
+
+
+
+% Consumer welfare improves if the benefits from lower high-demand state prices outweigh the costs of higher low-demand state prices. This condition can be expressed as:
+% \begin{equation}
+	% \begin{aligned}
+		% & \frac{\theta n^2}{16(n + 1)^2} + \frac{1}{16} \geq \frac{n^2\theta}{4(n+1)^2(1+\theta)} \\
+		% \iff & \frac{((\theta - 1)^2n^2 + 2(\theta + 1)n + 1 + \theta}{16(n+1)^2(1+ \theta)} > 0,
+		% \end{aligned}
+	% \end{equation}
+
+Finally, compared with the vertical integration case, the minimum RPM recovers the supply surplus, and the consumer surplus to that level if and only if $n$ goes to infinity. In that case, the market is perfectly competitive, and the supply surplus is equal to the wholesaler's profit. 
+
+\paragraph{Using both the minimum and maximum RPM}
+From the previous analysis, we see that although the sole use of minimum or maximum RPM can potentially increase the wholesaler's profit, they have not recovered to the vertical integration level. It is easy to see that, by setting both a minimum and a maximum RPM to $\frac{1}{2}$. The wholesaler can fully return to the vertical integration scenario. 
+
+\section{Numerical Simulation}
+
+\begin{figure}[tbp]
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		% include first image
+		\includegraphics[width=\linewidth]{figuretable/delivery_theta_4.png}  
+		\caption{Delivery}
+		\label{fig:equilibrium_comparison_theta_4_delivery}
+	\end{subfigure}
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		% include third image
+		\includegraphics[width=\linewidth]{figuretable/wholesale_price_theta_4.png} 
+		\caption{Wholesale price}
+		\label{fig:equilibrium_comparison_theta_4_wholesale}
+	\end{subfigure}
+	\newline
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		% include first image
+		\includegraphics[width=\linewidth]{figuretable/high_price_theta_4.png} 
+		\caption{High-demand price}
+		\label{fig:equilibrium_comparison_theta_4_high_price}
+	\end{subfigure}
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		% include second image
+		\includegraphics[width=\linewidth]{figuretable/low_price_theta_4.png} 
+		\caption{Low-demand price}
+		\label{fig:equilibrium_comparison_theta_4_low_price}
+	\end{subfigure}
+	\caption{Equilibrium when $\theta = 4$}
+	\label{fig:equilibrium_comparison_theta_4}
+	\footnotesize
+\end{figure}
+
+
+
+\begin{figure}[tbp]
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{figuretable/consumer_surplus_theta_4.png}  
+		\caption{Consumer welfare}
+		\label{fig:equilibrium_comparison_theta_4_cs}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{figuretable/wholesaler_surplus_theta_4.png} 
+		\caption{Wholesaler surplus}
+		\label{fig:equilibrium_comparison_theta_4_ws}
+	\end{subfigure}
+	\newline
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{figuretable/retailer_surplus_theta_4.png} 
+		\caption{Retailer surplus}
+		\label{fig:equilibrium_comparison_theta_4_rs}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{figuretable/supply_surplus_theta_4.png} 
+		\caption{Supply surplus}
+		\label{fig:equilibrium_comparison_theta_4_ss}
+	\end{subfigure}
+	\caption{Equilibrium welfare when $\theta = 4$}
+	\label{fig:welfare_comparision_theta_4}
+	\footnotesize
+\end{figure}
+
+
+
+ \begin{figure}[tbp]
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		% include first image
+		\includegraphics[width=\linewidth]{figuretable/delivery_theta_2.png}  
+		\caption{Delivery}
+		\label{fig:equilibrium_comparison_theta_2_delivery}
+	\end{subfigure}
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		% include third image
+		\includegraphics[width=\linewidth]{figuretable/wholesale_price_theta_2.png} 
+		\caption{Wholesale price}
+		\label{fig:equilibrium_comparison_theta_2_wholesale}
+	\end{subfigure}
+	\newline
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		% include first image
+		\includegraphics[width=\linewidth]{figuretable/high_price_theta_2.png} 
+		\caption{High-demand price}
+		\label{fig:equilibrium_comparison_theta_2_high_price}
+	\end{subfigure}
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		% include second image
+		\includegraphics[width=\linewidth]{figuretable/low_price_theta_2.png} 
+		\caption{Low-demand price}
+		\label{fig:equilibrium_comparison_theta_2_low_price}
+	\end{subfigure}
+	\caption{Equilibrium when $\theta = 2$}
+	\label{fig:equilibrium_comparison_theta_2}
+	\footnotesize
+\end{figure}
+
+
+
+\begin{figure}[tbp]
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{figuretable/consumer_surplus_theta_2.png}  
+		\caption{Consumer welfare}
+		\label{fig:equilibrium_comparison_theta_2_cs}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+	\centering
+		\includegraphics[width=\linewidth]{figuretable/wholesaler_surplus_theta_2.png} 
+		\caption{Wholesaler surplus}
+		\label{fig:equilibrium_comparison_theta_2_ws}
+	\end{subfigure}
+	\newline
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{figuretable/retailer_surplus_theta_2.png} 
+		\caption{Retailer surplus}
+		\label{fig:equilibrium_comparison_theta_2_rs}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{figuretable/supply_surplus_theta_2.png} 
+		\caption{Supply surplus}
+		\label{fig:equilibrium_comparison_theta_2_ss}
+	\end{subfigure}
+	\caption{Equilibrium welfare when $\theta = 2$}
+	\label{fig:welfare_comparision_theta_2}
+	\footnotesize
+\end{figure}
+
+To further illustrate the double marginalization and competition effects, as well as the use of maximum and minimum RPM, we conduct simulations of equilibria under four models: the vertical-integration model, wholesaler model, maximum RPM model, and minimum RPM model. We examine cases where $\theta = 4$ and $\theta = 2$ across different numbers of retailers. For $\theta = 4$, Figures \ref{fig:equilibrium_comparison_theta_4_delivery}, \ref{fig:equilibrium_comparison_theta_4_wholesale}, \ref{fig:equilibrium_comparison_theta_4_high_price}, and \ref{fig:equilibrium_comparison_theta_4_low_price} show the delivery quantities, wholesale prices, high-demand-state prices, and low-demand-state prices for all four models. Figures \ref{fig:equilibrium_comparison_theta_4_cs}, \ref{fig:equilibrium_comparison_theta_4_ws}, and \ref{fig:equilibrium_comparison_theta_4_rs} show the consumer surplus, wholesaler surplus, and retailer surplus. The corresponding variables for $\theta = 2$ are shown in Figures \ref{fig:equilibrium_comparison_theta_2} and \ref{fig:welfare_comparision_theta_2}. We use vertical dashed lines to indicate the thresholds that separate competitive and concentrated cases.
+
+
+\paragraph{$\theta = 4$: Hig-state-focused case} When $\theta = 4$, the model operates in the high-state-focused cases. Comparing the wholesale model (square marker) to vertical integration (circle marker), we observe consistently lower delivery quantities, higher high-state prices due to double marginalization effects, and lower low-state prices due to competition effects under the wholesale model. These opposing effects create ambiguous impacts on consumer surplus. The threshold $n = 3.77$ separates the competitive and concentrated cases - when $n < 3.77$, consumer surplus is lower under the wholesale model, but higher when $n > 3.77$. The wholesale model always yields lower wholesaler surplus and higher retailer surplus compared to vertical integration. As the number of retailers increases, competition effects strengthen while double marginalization effects weaken, leading to increases in both consumer and wholesaler surplus but decreases in retailer surplus.
+
+The use of maximum RPM (triangle marker) increases delivery quantities and reduces high-demand-state retail prices compared to the wholesale model, regardless of market concentration, while leaving low-demand-state retail prices unchanged. By restricting double marginalization effects, maximum RPM can boost consumer welfare from the wholesale model. However, this increase in consumer surplus becomes smaller as the number of retailers grows, when the double marginalization effect gets smaller. Note that the use of maximum RPM can increase the consumer surplus beyond even the vertical-integration model. This is  because, the use of maximum RPM, while recovers the high-demand-state retail price to the vertical-integration level, leads to a lower low-demand-state retail prices by having a higher delivery in the low-demand state. Therefore, consumers benefit from the higher competition from the vertical-integration.   Finally, while maximum RPM improves wholesaler profits relative to the wholesale model, these profits remain below vertical-integration levels. Retailers see their surplus reduced to zero under maximum RPM. Overall, the use of maximum RPM increase both the consumer and supply surplus.
+
+The use of minimum RPM (diamond marker) increases only the low-demand-state retail price, while leaving the delivery quantity and high-demand-state retail price unchanged, regardless of market concentration. Through its restriction of competition effects, minimum RPM reduces consumer surplus but increases wholesaler profits compared to the wholesale model. Meanwhile, retailer surplus declines relative to the wholesale model.
+
+\paragraph{$\theta = 2$: All-states-focused case} In the all-states-focused cases where $\theta = 2$, comparing the vertical-integration model (circle marker) with the wholesale model (square marker) reveals several key differences. The wholesale model consistently exhibits lower delivery quantities and higher high-state prices due to double marginalization effects. The low-demand-state price under the wholesale model varies with market concentration - it exceeds the vertical-integration price when the market is concentrated ($n \leq 3$) but falls below it when the market is competitive ($n > 3$). The wholesale model leads to reduced consumer surplus and wholesaler profit compared to vertical integration, while generating higher retailer profit.
+
+Under both the competitive case and concentrated case, the use of maximum RPM (triangle marker) might not be profitable for the wholesaler. This is because the use of maximum RPM lowers the prices in both the high and low-demand states.\footnote{Under both the competitive case and the concentrated case, the high-demand-state retail prices are lower because the maximum RPM bind in the high-demand states. Under the concentrated case, the low-demand-state retail price is lower because because the price ceiling directly binds in the low-demand state. However, under the competitive case,   the low-demand-state retail price is lower because the binding price ceiling in the high-demand state increases delivery, which therefore intensifies the competitive effect in the low-demand state.}
+The price in the low-demand state goes even lower than in the vertical-integration case, which could be unwanted by the wholesaler. The use of maximum RPM is profitable for the wholesaler only if the double marginalization effect is large enough. 
+Under the concentrated case, this requires $n \leq 2$. Under the competitive case, this requires $n \leq 8$. If maximum RPM is used, it increases consumer surplus and the supply surplus, given the retailer surplus is zero. 
+
+
+As we discussed in the previous section, in the concentrated all-states-focused case, the wholesaler has no incentive to use the minimum RPM as the retail prices in both demand states are already higher than the vertical-integration model. Any use of minimum RPM only pushes the retail prices further away from what is optimal for the wholesaler. Therefore, a trivial optimal minimum RPM strategy for $n < 3$ is to set the price floor equal to the retail prices under the wholesale model and all the equilibrium follows the wholesale model.  
+
+
+In the competitive all-states-focused case, minimum RPM (diamond marker) exhibits significant effects not seen in other cases. When implemented, minimum RPM raises prices in the low-demand state by eliminating the competition effect. This leads to increased delivery quantities, which subsequently drives down prices in the high-demand state. These price changes work in the wholesaler's favor, resulting in consistently higher profits compared to the wholesale model. From the consumer perspective, while the higher low-demand-state price is detrimental, the lower high-demand-state price is beneficial. The positive effect of the high-demand-state price reduction consistently outweighs the negative effect of the low-demand-state price increase, leading to higher consumer surplus relative to the wholesale model. Retailer surplus also improves under minimum RPM. However, despite these improvements, neither wholesaler profits nor consumer surplus can match the levels achieved under vertical integration.
+
+\section{Concluding Remark}
+
+
+This paper extends the classic model of \cite{deneckereDemandUncertaintyPrice1997} by analyzing how retailer competition affects the pro-competitive effects of minimum and maximum RPM under demand uncertainty. Our analysis reveals that the industry operates under four distinct regimes based on demand uncertainty and market concentration: high-state-focused competitive, high-state-focused concentrated, all-states-focused competitive, and all-states-focused concentrated cases.
+
+The effectiveness of minimum and maximum RPM varies across these regimes. In highly uncertain, competitive markets (high-state-focused competitive case), minimum RPM enhances efficiency by encouraging inventory holding. However, in markets with lower uncertainty or more concentrated retail sectors, maximum RPM better promotes competition by mitigating double marginalization. The key mechanism driving these results is the interaction between two effects: the double marginalization effect that emerges from retailer market power and the business-stealing effect from price competition.
+
+Our findings have important implications for antitrust policy. They suggest that authorities should evaluate RPM cases by considering both the level of demand uncertainty and the degree of retail competition. Minimum RPM may be justified in markets with high demand uncertainty and vigorous retail competition, while maximum RPM is more appropriate in concentrated markets or those with moderate demand uncertainty. This nuanced approach to vertical price restrictions can help balance the competing goals of encouraging efficient inventory decisions and preventing excessive retail markups.
+
+\singlespacing
+\setlength\bibsep{0pt}
+\bibliographystyle{aer.bst}
+\bibliography{library.bib}
+
+\end{document}

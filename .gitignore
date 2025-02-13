@@ -1,11 +1,71 @@
+# LaTeX temporary files
+*.aux
+*.log
+*.toc
+*.lof
+*.lot
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.bbl
+*.blg
+*.dvi
+*.bcf
+*.run.xml
+
+# PDF outputs
+*.pdf
+
+# Draft outputs
+draft/figuretable/*
+draft/*.pdf
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Poetry
+poetry.lock
+
+# Virtual Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Testing
+.coverage
+.pytest_cache/
+htmlcov/
+
+# R
 .Rproj.user
 .Rhistory
 .RData
-.Ruserdata
-src/*.o
-src/*.so
-src/*.dll
-/input
-/intermediate
-/cleaned
-/output
+.Ruserdata 
