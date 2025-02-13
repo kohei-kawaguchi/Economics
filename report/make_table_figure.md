@@ -138,7 +138,7 @@ table_summary%>%
     booktabs = TRUE
   ) %>%
   save_kable(
-    file = here::here("figuretable/tutorial_table_kable.tex")
+    file = here::here("draft/figuretable/tutorial_table_kable.tex")
   )
 ```
 ## Regression table by modelsummary
@@ -250,7 +250,7 @@ table_regression %>%
   ) %>%
   gsub("\\multicolumn.*\\\\", "", .) %>%
   save_kable(
-    file = here::here("figuretable/tutorial_table_modelsummary.tex")
+    file = here::here("draft/figuretable/tutorial_table_modelsummary.tex")
     )
 ```
 
@@ -294,7 +294,7 @@ df %>%
 ```r
 # save
 ggsave(
-  filename = here::here("figuretable/tutorial_figure_bar_ggplot2.png"),
+  filename = here::here("draft/figuretable/tutorial_figure_bar_ggplot2.png"),
   width = 4,
   height = 3
 )
@@ -344,7 +344,7 @@ df %>%
 ```r
 # save
 ggsave(
-  filename = here::here("figuretable/tutorial_figure_errorbar_ggplot2.png"),
+  filename = here::here("draft/figuretable/tutorial_figure_errorbar_ggplot2.png"),
   width = 4,
   height = 3
 )
