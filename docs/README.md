@@ -1,3 +1,102 @@
+# Development Environment Setup
+
+Before working with the project dependencies, ensure you have the following tools installed:
+
+## Essential Tools
+
+### Git
+
+1. Download and install Git from [git-scm.com](https://git-scm.com/downloads)
+2. Configure your Git identity:
+   ```bash
+   git config --global user.name "Your Name"
+   git config --global user.email "your.email@example.com"
+   ```
+
+### GitHub Account Setup
+
+1. Sign up for a GitHub account at [github.com](https://github.com/signup)
+2. Let the project owner know your GitHub username so they can add you as a collaborator
+3. Generate and add an SSH key for secure authentication:
+
+   **Generate SSH Key:**
+   ```bash
+   # Generate a new SSH key (press Enter when prompted for a passphrase or add one for extra security)
+   ssh-keygen -t ed25519 -C "your.email@example.com"
+   
+   # Start the SSH agent
+   eval "$(ssh-agent -s)"
+   
+   # Add your SSH key to the agent
+   ssh-add ~/.ssh/id_ed25519
+   
+   # Copy your public key to clipboard
+   # On macOS:
+   pbcopy < ~/.ssh/id_ed25519.pub
+   # On Windows (Git Bash):
+   cat ~/.ssh/id_ed25519.pub | clip
+   # On Linux:
+   cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+   ```
+
+   **Add SSH Key to GitHub:**
+   1. Log in to GitHub
+   2. Click your profile photo in the top right, then click Settings
+   3. In the left sidebar, click "SSH and GPG keys"
+   4. Click "New SSH key"
+   5. Add a descriptive title (e.g., "Work Laptop")
+   6. Paste your key into the "Key" field
+   7. Click "Add SSH key"
+
+   **Verify your connection:**
+   ```bash
+   ssh -T git@github.com
+   ```
+   
+   You should see a message like: "Hi username! You've successfully authenticated..."
+
+### VS Code or Cursor
+
+1. Download and install VS Code from [code.visualstudio.com](https://code.visualstudio.com/) or Cursor from [cursor.sh](https://cursor.sh/)
+2. Install recommended extensions (see below)
+
+### TeXLive
+
+Install a full TeXLive distribution for LaTeX support:
+
+- **Windows**: Download and install from [tug.org/texlive/acquire-netinstall.html](https://tug.org/texlive/acquire-netinstall.html)
+- **macOS**: Install MacTeX from [tug.org/mactex/](https://tug.org/mactex/)
+- **Linux**: 
+  ```bash
+  # Ubuntu/Debian
+  sudo apt-get install texlive-full
+  
+  # Fedora
+  sudo dnf install texlive-scheme-full
+  ```
+
+## IDE Extensions
+
+Install the following VS Code/Cursor extensions for a better development experience:
+
+### LaTeX Workshop
+- Search for "LaTeX Workshop" in the Extensions view or install from [marketplace](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop)
+- Provides LaTeX editing, compilation, and preview support
+
+### Python Extensions
+- "Python" by Microsoft: Provides IntelliSense, linting, debugging, etc.
+- "Pylance": Enhanced language server for Python
+- "Python Indent": Smart indentation for Python files
+
+### R Extensions
+- "R" by REditorSupport: R language support
+- "R Debugger": Debug R scripts
+
+### Optional but Recommended
+- "Git Graph": Visualize Git history
+- "GitLens": Enhanced Git capabilities
+- "Markdown All in One": Markdown support for documentation
+
 # Installing Dependencies
 
 ## First-time Setup for Collaborators
