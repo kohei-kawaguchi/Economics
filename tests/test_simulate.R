@@ -75,3 +75,4 @@ equilibrium$choice %>%
   all()
 
 
+
