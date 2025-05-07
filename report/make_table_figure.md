@@ -10,25 +10,22 @@ output:
 # Load libraries and data
 
 
-```r
+``` r
 library(magrittr)
-```
-
-```
-## Warning: package 'magrittr' was built under R version 4.0.3
-```
-
-```r
 library(kableExtra)
-```
-
-```
-## Warning: package 'kableExtra' was built under R version 4.0.5
-```
-
-```r
 library(modelsummary)
 library(ggplot2)
+```
+
+```
+## Warning: package 'ggplot2' was built under R version 4.3.1
+```
+
+``` r
+dir.create(
+  path = here::here("draft/figuretable/tutorial"),
+  recursive = TRUE
+)
 df <- chickwts
 ```
 
@@ -38,7 +35,7 @@ df <- chickwts
 
 
 
-```r
+``` r
 # make summary table
 table_summary <-
   df %>%
@@ -130,7 +127,7 @@ table_summary %>%
 </tbody>
 </table>
 
-```r
+``` r
 # export to latex for draft
 table_summary%>%
   kbl(
@@ -138,13 +135,13 @@ table_summary%>%
     booktabs = TRUE
   ) %>%
   save_kable(
-    file = here::here("draft/figuretable/tutorial_table_kable.tex")
+    file = here::here("draft/figuretable/tutorial/table_kable.tex")
   )
 ```
 ## Regression table by modelsummary
 
 
-```r
+``` r
 # run a regression
 table_regression <-
   df %>%
@@ -162,11 +159,11 @@ table_regression %>%
   kable_classic()
 ```
 
-<table class="table lightable-classic" style='width: auto !important; margin-left: auto; margin-right: auto; font-family: "Arial Narrow", "Source Sans Pro", sans-serif; margin-left: auto; margin-right: auto;'>
+<table style='NAborder-bottom: 0; width: auto !important; margin-left: auto; margin-right: auto; font-family: "Arial Narrow", "Source Sans Pro", sans-serif; margin-left: auto; margin-right: auto;' class="table lightable-classic">
  <thead>
   <tr>
    <th style="text-align:left;">   </th>
-   <th style="text-align:center;"> Model 1 </th>
+   <th style="text-align:center;">  (1) </th>
   </tr>
  </thead>
 <tbody>
@@ -180,7 +177,7 @@ table_regression %>%
   </tr>
   <tr>
    <td style="text-align:left;"> as.factor(feed)horsebean </td>
-   <td style="text-align:center;"> -163.383*** </td>
+   <td style="text-align:center;"> −163.383*** </td>
   </tr>
   <tr>
    <td style="text-align:left;">  </td>
@@ -188,7 +185,7 @@ table_regression %>%
   </tr>
   <tr>
    <td style="text-align:left;"> as.factor(feed)linseed </td>
-   <td style="text-align:center;"> -104.833*** </td>
+   <td style="text-align:center;"> −104.833*** </td>
   </tr>
   <tr>
    <td style="text-align:left;">  </td>
@@ -196,7 +193,7 @@ table_regression %>%
   </tr>
   <tr>
    <td style="text-align:left;"> as.factor(feed)meatmeal </td>
-   <td style="text-align:center;"> -46.674** </td>
+   <td style="text-align:center;"> −46.674* </td>
   </tr>
   <tr>
    <td style="text-align:left;">  </td>
@@ -204,7 +201,7 @@ table_regression %>%
   </tr>
   <tr>
    <td style="text-align:left;"> as.factor(feed)soybean </td>
-   <td style="text-align:center;"> -77.155*** </td>
+   <td style="text-align:center;"> −77.155*** </td>
   </tr>
   <tr>
    <td style="text-align:left;">  </td>
@@ -215,8 +212,8 @@ table_regression %>%
    <td style="text-align:center;"> 5.333 </td>
   </tr>
   <tr>
-   <td style="text-align:left;box-shadow: 0px 1px">  </td>
-   <td style="text-align:center;box-shadow: 0px 1px"> (22.393) </td>
+   <td style="text-align:left;box-shadow: 0px 1.5px">  </td>
+   <td style="text-align:center;box-shadow: 0px 1.5px"> (22.393) </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Num.Obs. </td>
@@ -230,16 +227,24 @@ table_regression %>%
    <td style="text-align:left;"> R2 Adj. </td>
    <td style="text-align:center;"> 0.506 </td>
   </tr>
+  <tr>
+   <td style="text-align:left;"> AIC </td>
+   <td style="text-align:center;"> 777.9 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> BIC </td>
+   <td style="text-align:center;"> 793.7 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> RMSE </td>
+   <td style="text-align:center;"> 52.48 </td>
+  </tr>
 </tbody>
-<tfoot>
-<tr>
-<td style="padding: 0; border:0;" colspan="100%">
-<sup></sup> * p &lt; 0.1, ** p &lt; 0.05, *** p &lt; 0.01</td>
-</tr>
-</tfoot>
+<tfoot><tr><td style="padding: 0; " colspan="100%">
+<sup></sup> + p &lt; 0.1, * p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001</td></tr></tfoot>
 </table>
 
-```r
+``` r
 # export to latex for draft
 table_regression %>%
   modelsummary(
@@ -250,8 +255,27 @@ table_regression %>%
   ) %>%
   gsub("\\multicolumn.*\\\\", "", .) %>%
   save_kable(
-    file = here::here("draft/figuretable/tutorial_table_modelsummary.tex")
+    file = here::here("draft/figuretable/tutorial/table_modelsummary.tex")
     )
+```
+
+```
+## Warning: To compile a LaTeX document with this table, the following commands must be placed in the document preamble:
+## 
+## \usepackage{booktabs}
+## \usepackage{siunitx}
+## \newcolumntype{d}{S[
+##     input-open-uncertainty=,
+##     input-close-uncertainty=,
+##     parse-numbers = false,
+##     table-align-text-pre=false,
+##     table-align-text-post=false
+##  ]}
+## 
+## To disable `siunitx` and prevent `modelsummary` from wrapping numeric entries in `\num{}`, call:
+## 
+## options("modelsummary_format_numeric_latex" = "plain")
+##  This warning appears once per session.
 ```
 
 # Figure
@@ -259,7 +283,7 @@ table_regression %>%
 ## Bar plot by ggplot2
 
 
-```r
+``` r
 # display plot
 df %>%
   dplyr::group_by(feed) %>%
@@ -291,10 +315,10 @@ df %>%
 
 ![](make_table_figure_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
 
-```r
+``` r
 # save
 ggsave(
-  filename = here::here("draft/figuretable/tutorial_figure_bar_ggplot2.png"),
+  filename = here::here("draft/figuretable/tutorial/figure_bar_ggplot2.png"),
   width = 4,
   height = 3
 )
@@ -303,7 +327,7 @@ ggsave(
 ## Error bar plot by ggplot2
 
 
-```r
+``` r
 # display plot
 df %>%
   dplyr::group_by(feed) %>%
@@ -341,10 +365,10 @@ df %>%
 
 ![](make_table_figure_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
-```r
+``` r
 # save
 ggsave(
-  filename = here::here("draft/figuretable/tutorial_figure_errorbar_ggplot2.png"),
+  filename = here::here("draft/figuretable/tutorial/figure_errorbar_ggplot2.png"),
   width = 4,
   height = 3
 )
