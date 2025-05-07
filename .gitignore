@@ -1,21 +1,23 @@
 # LaTeX temporary files
-*.aux
-*.log
-*.toc
-*.lof
-*.lot
-*.out
-*.synctex.gz
-*.fls
-*.fdb_latexmk
-*.bbl
-*.blg
-*.dvi
-*.bcf
-*.run.xml
+draft/*.aux
+draft/*.log
+draft/*.toc
+draft/*.lof
+draft/*.lot
+draft/*.out
+draft/*.synctex.gz
+draft/*.fls
+draft/*.fdb_latexmk
+draft/*.bbl
+draft/*.blg
+draft/*.dvi
+draft/*.bcf
+draft/*.run.xml
+draft/*.nav
+draft/*.snm
 
 # PDF outputs
-*.pdf
+draft/*.pdf
 
 # Draft outputs
 draft/figuretable/*
