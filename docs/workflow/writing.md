@@ -35,7 +35,6 @@ Scripts for generating figures and tables must be placed in the `report/` folder
 
 - **R**: Use Rmarkdown (.Rmd) or Quarto (.qmd) files
 - **Python**: Use Jupyter notebooks (.ipynb) or scripts (.py)
-- **Stata**: Use .do files with export commands
 
 Example R workflow using Rmarkdown/Quarto:
 ```r
