@@ -43,7 +43,7 @@ def categorize_changes(changed_files):
 def generate_weekly_note():
     """Generate a new weekly note based on the template."""
     # Get the template
-    template_path = Path('obsidian/templates/weekly-iteration.md')
+    template_path = Path('docs/templates/weekly-iteration.md')
     with open(template_path, 'r') as f:
         template = f.read()
     
@@ -78,7 +78,7 @@ def generate_weekly_note():
     )
     
     # Save the new note
-    output_dir = Path('obsidian/weekly-iterations')
+    output_dir = Path('docs/weekly-iterations')
     output_dir.mkdir(exist_ok=True)
     
     output_file = output_dir / f'iteration-{today.strftime("%Y-%m-%d")}.md'
