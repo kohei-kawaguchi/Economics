@@ -216,5 +216,6 @@ xelatex your_slide.tex
 3. Store only programmatically generated figures and tables in the `figuretable/` directory
 4. Generate all figures and tables using reproducible scripts in the `report/` folder
 5. Maintain a single `library.bib` file for all your references
-6. DO NOT use comments (`% comment`) to leave notes for yourself or collaborators
-7. DO NOT use `\red{text}` and `\blue{text}` to highlight temporary notes or changes
+6. Use TBA (`TBA comment`) to leave notes for yourself or collaborators
+7. Use comments in GitHub Issues for comments requiring discussion
+8. DO NOT use `\red{text}` and `\blue{text}` to highlight temporary notes or changes
