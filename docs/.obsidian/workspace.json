@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "workflow/reporting_pipeline.md",
+                "file": "workflow/weekly_iterations.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "reporting_pipeline"
+              "title": "weekly_iterations"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "workflow/reporting_pipeline.md",
+                "file": "workflow/weekly_iterations.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for reporting_pipeline"
+              "title": "Backlinks for weekly_iterations"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "workflow/reporting_pipeline.md",
+                "file": "workflow/weekly_iterations.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from reporting_pipeline"
+              "title": "Outgoing links from weekly_iterations"
             }
           },
           {
@@ -142,13 +142,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "workflow/reporting_pipeline.md",
+                "file": "workflow/weekly_iterations.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of reporting_pipeline"
+              "title": "Outline of weekly_iterations"
             }
           }
         ]
@@ -170,6 +170,7 @@
   },
   "active": "d889927dc7eba58e",
   "lastOpenFiles": [
+    "workflow/reporting_pipeline.md",
     "workflow/weekly_iterations.md",
     "workflow/data_pipeline.md",
     "workflow/version_control.md"

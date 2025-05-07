@@ -24,36 +24,6 @@ Each weekly iteration follows this pattern:
 3. **Review and Integrate**: Test changes, verify model results, and consolidate documentation
 4. **Reflect and Plan**: Evaluate the week's work and prepare for the next iteration
 
-## Comprehensive Scope of Weekly Iterations
-
-Our weekly iterations encompass four interconnected areas:
-
-### Research and Survey Work
-- Literature review and research design
-- Survey development and implementation
-- Data collection and initial analysis
-- Synthesis of findings
-
-### Economic Model Development
-- Theoretical model specification and formulation
-- Mathematical derivation and proof development
-- Study of model properties and behavior
-- Comparative statics 
-- Extension and generalization of existing models
-
-### Codebase Development
-- Implementation of analytical tools
-- Development of data processing pipelines
-- Creation of visualization components
-- Integration of research findings and models into code
-
-### Documentation
-- Research reports and findings
-- Model documentation and mathematical proofs
-- Technical documentation
-- Methodology guides
-- User documentation and tutorials
-
 ## Getting Started with Weekly Iterations
 
 As you join our team:
@@ -93,16 +63,6 @@ Define clear objectives that advance all areas of the project (research, modelin
 - Each week should advance our understanding and capabilities
 - Address theoretical gaps and model refinements incrementally
 - Refine processes based on what you learn
-
-## Adapting to Project Needs
-
-Weekly iterations provide structure, but flexibility is essential:
-
-- **Research Depth**: Some topics may require deeper investigation across multiple weeks
-- **Model Complexity**: Complex economic models may need development across multiple iterations
-- **Theoretical Challenges**: Difficult proofs or derivations may require extended focus
-- **Interdisciplinary Collaboration**: Coordinate with team members from different backgrounds
-- **Learning Time**: Budget time for exploring new methods or technologies when needed
 
 ## Conclusion
 
