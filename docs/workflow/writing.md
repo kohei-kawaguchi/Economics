@@ -19,6 +19,74 @@ This central location helps maintain consistency and makes it easier to:
 - Reuse figures across documents
 - Track all writing projects in one place
 
+## Figure and Table Management
+
+### Programmatic Generation
+
+All figures and tables in the `figuretable/` directory **must be programmatically generated** and should **never be manually edited**. This ensures:
+
+- Reproducibility of results
+- Consistency across revisions
+- Proper version control of data visualizations
+
+### Generation Scripts
+
+Scripts for generating figures and tables must be placed in the `report/` folder:
+
+- **R**: Use Rmarkdown (.Rmd) or Quarto (.qmd) files
+- **Python**: Use Jupyter notebooks (.ipynb) or scripts (.py)
+- **Stata**: Use .do files with export commands
+
+Example R workflow using Rmarkdown/Quarto:
+```r
+# In report/generate_figures.Rmd or report/generate_figures.qmd
+library(ggplot2)
+library(dplyr)
+
+# Load data
+data <- read.csv("data/your_dataset.csv")
+
+# Create figure
+p <- 
+   ggplot(
+      data, 
+      aes(
+         x = x_variable, 
+         y = y_variable
+      )
+   ) +
+  geom_point() +
+  theme_classic() +
+  labs(
+   title = "Your Title"
+  )
+
+# Save to figuretable directory
+ggsave(
+   "../figuretable/your_figure.png", 
+   p, 
+   width = 8, 
+   height = 6
+)
+```
+
+### Workflow
+
+1. Create scripts in the `report/` directory using Rmarkdown, Quarto, or other reproducible formats
+2. Write code to generate visualizations and tables within these scripts
+3. Run scripts to output results directly to the `figuretable/` directory
+4. Reference these outputs in your LaTeX documents
+
+### Referencing in LaTeX
+
+```latex
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figuretable/your_programmatically_generated_figure.png}
+    \caption{Caption describing the programmatically generated figure}
+\end{figure}
+```
+
 ## Draft Workflow
 
 ### Setup
@@ -145,7 +213,8 @@ xelatex your_slide.tex
 
 1. Use version control (Git) to track changes to your documents
 2. Keep all papers and presentations in the `draft/` directory
-3. Store shared figures in a common `figuretable/` directory
-4. Maintain a single `library.bib` file for all your references
-5. Use comments (`% comment`) to leave notes for yourself or collaborators
-6. Use `\red{text}` and `\blue{text}` to highlight temporary notes or changes
+3. Store only programmatically generated figures and tables in the `figuretable/` directory
+4. Generate all figures and tables using reproducible scripts in the `report/` folder
+5. Maintain a single `library.bib` file for all your references
+6. DO NOT use comments (`% comment`) to leave notes for yourself or collaborators
+7. DO NOT use `\red{text}` and `\blue{text}` to highlight temporary notes or changes
