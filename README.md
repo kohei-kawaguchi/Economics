@@ -92,11 +92,6 @@ Install the following VS Code/Cursor extensions for a better development experie
 - "R" by REditorSupport: R language support
 - "R Debugger": Debug R scripts
 
-### Optional but Recommended
-- "Git Graph": Visualize Git history
-- "GitLens": Enhanced Git capabilities
-- "Markdown All in One": Markdown support for documentation
-
 # Installing Dependencies
 
 ## First-time Setup for Collaborators
