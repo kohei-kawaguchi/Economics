@@ -45,8 +45,7 @@ wheels/
 .installed.cfg
 *.egg
 
-# Poetry
-poetry.lock
+# uv (uv.lock should be committed to version control)
 
 # Virtual Environments
 .env

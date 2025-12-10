@@ -35,7 +35,7 @@ def categorize_changes(changed_files):
             categories['code'].append(file)
         elif file.endswith('.md') or 'docs' in file:
             categories['docs'].append(file)
-        elif file in ['pyproject.toml', 'poetry.lock', 'requirements.txt'] or 'config' in file:
+        elif file in ['pyproject.toml', 'uv.lock', 'requirements.txt'] or 'config' in file:
             categories['infra'].append(file)
     
     return categories

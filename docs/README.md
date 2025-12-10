@@ -143,22 +143,22 @@ Install the following VS Code/Cursor extensions for a better development experie
 
 ## First-time Setup for Collaborators
 
-### Installing Poetry (Python Dependency Manager)
+### Installing uv (Python Dependency Manager)
 
-Before installing project dependencies, you need to install Poetry:
+Before installing project dependencies, you need to install uv:
 
 ```bash
 # On macOS/Linux/WSL
-curl -sSL https://install.python-poetry.org | python3 -
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # On Windows (PowerShell)
-(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | python -
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
 Verify installation:
 
 ```bash
-poetry --version
+uv --version
 ```
 
 ### Installing renv (R Dependency Manager)
@@ -176,32 +176,39 @@ install.packages("renv")
 library(renv)
 ```
 
-## Installing Python Dependencies with Poetry
+## Installing Python Dependencies with uv
 
-This project uses Poetry for Python dependencies. The project is already initialized.
+This project uses uv for Python dependencies. The project is already initialized.
 
 1. Install all project dependencies:
 
    ```bash
-   poetry install
+   uv sync
    ```
    
-   This will read the `pyproject.toml` and `poetry.lock` files and install all required packages.
+   This will read the `pyproject.toml` file and install all required packages. Use `uv sync --dev` to include development dependencies.
 
 2. Activate the virtual environment:
 
    ```bash
-   poetry shell
+   # On macOS/Linux/WSL
+   source .venv/bin/activate
+   
+   # On Windows (PowerShell)
+   .venv\Scripts\Activate.ps1
+   
+   # On Windows (Git Bash)
+   source .venv/Scripts/activate
    ```
 
 3. If you need to add a new dependency:
 
    ```bash
    # Add a regular dependency
-   poetry add package-name
+   uv add package-name
    
    # Add a development dependency
-   poetry add package-name --group dev
+   uv add --dev package-name
    ```
 
 ## Installing R Dependencies with renv
@@ -234,14 +241,14 @@ This project uses renv for R dependencies. The project is already initialized.
 
 ## Updating Dependencies
 
-### Python (Poetry)
+### Python (uv)
 
 ```bash
 # Update all dependencies
-poetry update
+uv lock --upgrade
 
 # Update a specific package
-poetry update package-name
+uv add package-name@latest
 ```
 
 ### R (renv)
