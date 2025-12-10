@@ -33,3 +33,4 @@ with open(os.path.join(prefix, "equilibrium.pkl"), "wb") as f:
     pickle.dump(equilibrium, f)
 
 print(f"Simulation completed and saved to {os.path.join(prefix, 'equilibrium.pkl')}")
+
