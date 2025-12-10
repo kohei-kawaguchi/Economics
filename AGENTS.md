@@ -1,0 +1,2 @@
+Read [.cursorrules](.cursorrules)
+
