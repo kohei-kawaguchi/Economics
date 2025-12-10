@@ -260,3 +260,4 @@ renv::update()
 # Update a specific package
 renv::update("package-name")
 ```
+

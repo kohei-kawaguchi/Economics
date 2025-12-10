@@ -5,6 +5,7 @@ description = "Economic model simulations and visualizations"
 authors = [
     {name = "Your Name", email = "your.email@example.com"}
 ]
+readme = "README.md"
 requires-python = ">=3.12,<4.0"
 dependencies = [
     "matplotlib>=3.8.0,<4.0.0",  # For plotting
