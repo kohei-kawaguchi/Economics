@@ -179,10 +179,10 @@ This project uses uv for Python dependencies. The project is already initialized
 
 ## Using the Python Package
 
-After installing the package in editable mode, you can import and use the `economics` module:
+After installing the package in editable mode, you can import and use the `src.economics` module:
 
 ```python
-from economics.simulate import make_equilibrium, simulate_choice
+from src.economics.simulate import make_equilibrium, simulate_choice
 
 # Create equilibrium structure
 equilibrium = make_equilibrium(

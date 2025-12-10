@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import pickle
-from economics.simulate import make_equilibrium, simulate_choice
+from src.economics.simulate import make_equilibrium, simulate_choice
 
 # Set constants
 prefix = "output/simulate/"
