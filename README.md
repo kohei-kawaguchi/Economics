@@ -75,48 +75,6 @@ Install a full TeXLive distribution for LaTeX support:
   sudo dnf install texlive-scheme-full
   ```
 
-### Obsidian for Note-Taking
-
-Obsidian is a powerful knowledge base and note-taking application that works on top of a local folder of plain text Markdown files.
-
-1. **Download and Install Obsidian**:
-   - Go to [obsidian.md](https://obsidian.md/) and download the free version for your platform
-   - Install the application following the on-screen instructions
-
-2. **Setting Up Obsidian**:
-   - Launch Obsidian
-   - Choose "Open folder as vault" (A vault is just a folder where Obsidian stores your notes)
-   - **Important**: Navigate to and select the `docs` folder in this project
-   - This ensures all documentation is kept in the same location and can be version-controlled
-   - If prompted, trust the author of the vault
-
-3. **Using Obsidian**:
-   - Create new notes with the "New note" button
-   - Link between notes using `[[double brackets]]`
-   - Organize notes with folders and tags
-   - Use Markdown syntax for formatting:
-     ```markdown
-     # Heading 1
-     ## Heading 2
-     **Bold text**
-     *Italic text*
-     - Bullet list
-     1. Numbered list
-     ```
-
-4. **Recommended Plugins** (Optional):
-   - Go to Settings → Community plugins → Turn on Community plugins
-   - Browse and install plugins like:
-     - Calendar
-     - Dataview (for querying your notes)
-     - Advanced Tables
-     - Citations (for academic references)
-
-5. **Syncing** (Optional):
-   - Obsidian's files are just plain text files in your project's `docs` folder
-   - They will be included in your Git repository for version control
-   - For more advanced sync, consider Obsidian Sync (paid service) or use your own solution like Dropbox/Google Drive
-
 ## IDE Extensions
 
 Install the following VS Code/Cursor extensions for a better development experience:
