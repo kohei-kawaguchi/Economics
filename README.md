@@ -159,7 +159,16 @@ This project uses uv for Python dependencies. The project is already initialized
    source .venv/Scripts/activate
    ```
 
-3. If you need to add a new dependency:
+3. Install the Python package in editable mode:
+
+   ```bash
+   # Install the economics package from src/ in editable mode
+   uv pip install -e .
+   ```
+   
+   This makes the `economics` module available for import. The package is located in `src/economics/`.
+
+4. If you need to add a new dependency:
 
    ```bash
    # Add a regular dependency
@@ -168,6 +177,31 @@ This project uses uv for Python dependencies. The project is already initialized
    # Add a development dependency
    uv add --dev package-name
    ```
+
+## Using the Python Package
+
+After installing the package in editable mode, you can import and use the `economics` module:
+
+```python
+from economics.simulate import make_equilibrium, simulate_choice
+
+# Create equilibrium structure
+equilibrium = make_equilibrium(
+    num_simulation=100,
+    num_alternative=3,
+    num_covariate=2
+)
+
+# Simulate choices
+equilibrium = simulate_choice(
+    seed=10,
+    equilibrium=equilibrium
+)
+```
+
+The Python package is located in `src/economics/` and includes:
+- `simulate.py` - Simulation functions for economic models
+- `utils/` - Utility functions and helpers
 
 ## Installing R Dependencies with renv
 
