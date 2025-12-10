@@ -141,7 +141,11 @@ This project uses uv for Python dependencies. The project is already initialized
    
    This will read the `pyproject.toml` file and install all required packages. Use `uv sync --dev` to include development dependencies.
 
-2. Activate the virtual environment:
+2. Select the Python interpreter:
+
+   **In VS Code/Cursor:** The IDE will automatically detect the virtual environment and prompt you to select it. When you open a Python file, click on the Python version in the bottom-right corner of the status bar, or use the Command Palette (Ctrl+Shift+P / Cmd+Shift+P) and select "Python: Select Interpreter", then choose `.venv/bin/python` (or `.venv\Scripts\python.exe` on Windows).
+
+   **For terminal work:** If you need to activate the virtual environment manually in your terminal:
 
    ```bash
    # On macOS/Linux/WSL
