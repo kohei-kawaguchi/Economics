@@ -10,6 +10,23 @@ Simple and effective git workflow for individual and team projects.
 
 ---
 
+# Local and Remote Repository
+
+- **Local**: Your machine. Full history and working copy live here.
+- **Remote**: Hosted copy (e.g. GitHub). Shared source of truth; others push and pull from it.
+- You sync between them with push and pull.
+
+---
+
+# Core Concepts
+
+- **Staging**: Mark changes to include in the next snapshot (`git add`).
+- **Commit**: Save a snapshot of staged changes in local history (`git commit`).
+- **Push**: Send your commits from local to remote (`git push`).
+- **Pull**: Bring remote commits into your local repo and working tree (`git pull`).
+
+---
+
 # Basic Workflow
 
 1. Clone: `git clone <url>`
