@@ -6,7 +6,9 @@ paginate: true
 
 # Minimal Git Workflow
 
-Simple and effective git workflow for individual and team projects.
+- **Repository**: The Git database (history, branches, tags). Stored in `.git`.
+- **Worktree**: The directory of files you edit. Your current branch's snapshot, plus any uncommitted changes.
+- Simple and effective git workflow for individual and team projects.
 
 ---
 
