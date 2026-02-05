@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   data-cleaning:
-    name: Data Cleaning (40 points)
+    name: Data Cleaning (30 points)
     runs-on: ubuntu-latest
     outputs:
       result: ${{ steps.test.outcome }}
@@ -38,7 +38,7 @@ jobs:
         run: uv run pytest tests/test_cleaning.py -v
 
   analysis:
-    name: Analysis (30 points)
+    name: Analysis (20 points)
     runs-on: ubuntu-latest
     outputs:
       result: ${{ steps.test.outcome }}
@@ -60,6 +60,30 @@ jobs:
         id: test
         continue-on-error: true
         run: uv run pytest tests/test_analysis.py -v
+
+  codebook:
+    name: Codebook (20 points)
+    runs-on: ubuntu-latest
+    outputs:
+      result: ${{ steps.test.outcome }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Run codebook tests
+        id: test
+        continue-on-error: true
+        run: uv run pytest tests/test_codebook.py -v
 
   git-workflow:
     name: Git Workflow (30 points)
@@ -93,32 +117,41 @@ jobs:
   feedback:
     name: Post Feedback
     runs-on: ubuntu-latest
-    needs: [data-cleaning, analysis, git-workflow]
+    needs: [data-cleaning, analysis, codebook, git-workflow]
     if: always() && github.event_name == 'pull_request'
     steps:
       - name: Generate feedback comment
         run: |
           CLEANING_RESULT="${{ needs.data-cleaning.outputs.result }}"
           ANALYSIS_RESULT="${{ needs.analysis.outputs.result }}"
+          CODEBOOK_RESULT="${{ needs.codebook.outputs.result }}"
           WORKFLOW_RESULT="${{ needs.git-workflow.outputs.result }}"
           
           # Calculate score
           CLEANING_POINTS=0
           ANALYSIS_POINTS=0
+          CODEBOOK_POINTS=0
           WORKFLOW_POINTS=0
           
           if [ "$CLEANING_RESULT" == "success" ]; then
-            CLEANING_POINTS=40
+            CLEANING_POINTS=30
             CLEANING_EMOJI="✅"
           else
             CLEANING_EMOJI="❌"
           fi
           
           if [ "$ANALYSIS_RESULT" == "success" ]; then
-            ANALYSIS_POINTS=30
+            ANALYSIS_POINTS=20
             ANALYSIS_EMOJI="✅"
           else
             ANALYSIS_EMOJI="❌"
+          fi
+          
+          if [ "$CODEBOOK_RESULT" == "success" ]; then
+            CODEBOOK_POINTS=20
+            CODEBOOK_EMOJI="✅"
+          else
+            CODEBOOK_EMOJI="❌"
           fi
           
           if [ "$WORKFLOW_RESULT" == "success" ]; then
@@ -128,7 +161,7 @@ jobs:
             WORKFLOW_EMOJI="❌"
           fi
           
-          TOTAL=$((CLEANING_POINTS + ANALYSIS_POINTS + WORKFLOW_POINTS))
+          TOTAL=$((CLEANING_POINTS + ANALYSIS_POINTS + CODEBOOK_POINTS + WORKFLOW_POINTS))
           
           # Build comment
           cat << 'COMMENT_EOF' > comment.md
@@ -138,8 +171,9 @@ jobs:
           |-----------|--------|--------|
           COMMENT_EOF
           
-          echo "| Data Cleaning (3NF) | $CLEANING_EMOJI | $CLEANING_POINTS/40 |" >> comment.md
-          echo "| Analysis | $ANALYSIS_EMOJI | $ANALYSIS_POINTS/30 |" >> comment.md
+          echo "| Data Cleaning (3NF) | $CLEANING_EMOJI | $CLEANING_POINTS/30 |" >> comment.md
+          echo "| Analysis | $ANALYSIS_EMOJI | $ANALYSIS_POINTS/20 |" >> comment.md
+          echo "| Codebook | $CODEBOOK_EMOJI | $CODEBOOK_POINTS/20 |" >> comment.md
           echo "| Git Workflow | $WORKFLOW_EMOJI | $WORKFLOW_POINTS/30 |" >> comment.md
           echo "| **Total** | | **$TOTAL/100** |" >> comment.md
           echo "" >> comment.md
@@ -178,6 +212,20 @@ jobs:
           FEEDBACK_EOF
           fi
           
+          if [ "$CODEBOOK_RESULT" != "success" ]; then
+            cat << 'FEEDBACK_EOF' >> comment.md
+          ### ❌ Codebook Issues
+          
+          Your codebook needs work. In `report/codebook.qmd`:
+          
+          - Add descriptions for each table (replace TODO)
+          - Define foreign keys for the orders table
+          - Define all variables with type, unit, and description
+          - Use actual units for numeric variables (e.g., JPY, units)
+          
+          FEEDBACK_EOF
+          fi
+          
           if [ "$WORKFLOW_RESULT" != "success" ]; then
             cat << 'FEEDBACK_EOF' >> comment.md
           ### ❌ Git Workflow Issues
@@ -197,9 +245,10 @@ jobs:
           All tests passed. You have successfully:
           - Implemented data cleaning with proper 3NF normalization
           - Built analysis that correctly uses cleaned data
+          - Created a complete codebook documenting your data
           - Followed proper git workflow practices
           
-          **Key takeaway:** Cleaning (input→cleaned) is analysis-agnostic. Analysis (cleaned→output) answers specific questions.
+          **Key takeaway:** Cleaning (input→cleaned) is analysis-agnostic. Analysis (cleaned→output) answers specific questions. The codebook documents your cleaned data for future users.
           
           FEEDBACK_EOF
           fi

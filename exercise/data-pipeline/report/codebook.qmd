@@ -1,0 +1,148 @@
+---
+title: "Codebook: Cleaned Data"
+format: html
+---
+
+```{python}
+#| echo: false
+import pandas as pd
+from pathlib import Path
+
+CLEANED_DIR = Path("../cleaned")
+
+# TODO: Define the TABLES configuration
+# Each table should have:
+# - file: filename in cleaned/
+# - description: what the table contains
+# - primary_key: list of primary key columns
+# - foreign_keys: dict mapping column -> referenced table
+# - variables: dict of variable definitions with type, unit, desc
+
+TABLES = {
+    "customers": {
+        "file": "customers.csv",
+        "description": "TODO: Add description",
+        "primary_key": ["customer_id"],
+        "foreign_keys": {},
+        "variables": {
+            # TODO: Define each variable
+            # "column_name": {"type": "string|integer|float|date", "unit": "JPY|-|units", "desc": "Description"}
+        }
+    },
+    "products": {
+        "file": "products.csv",
+        "description": "TODO: Add description",
+        "primary_key": ["product_id"],
+        "foreign_keys": {},
+        "variables": {
+            # TODO: Define each variable
+        }
+    },
+    "orders": {
+        "file": "orders.csv",
+        "description": "TODO: Add description",
+        "primary_key": ["order_id"],
+        "foreign_keys": {
+            # TODO: Define foreign keys
+            # "customer_id": "customers",
+            # "product_id": "products",
+        },
+        "variables": {
+            # TODO: Define each variable
+        }
+    },
+}
+
+
+def load_table(filename):
+    """Load a CSV table from the cleaned directory."""
+    return pd.read_csv(CLEANED_DIR / filename)
+
+
+def compute_summary(df):
+    """Compute summary statistics for a dataframe."""
+    summary = []
+    for col in df.columns:
+        stats = {
+            "Variable": col,
+            "N": len(df),
+            "Missing": df[col].isna().sum(),
+            "Unique": df[col].nunique(),
+        }
+        if pd.api.types.is_numeric_dtype(df[col]):
+            stats["Mean"] = f"{df[col].mean():.2f}"
+            stats["Std"] = f"{df[col].std():.2f}"
+            stats["Min"] = f"{df[col].min():.2f}"
+            stats["Max"] = f"{df[col].max():.2f}"
+        else:
+            stats["Mean"] = "-"
+            stats["Std"] = "-"
+            stats["Min"] = "-"
+            stats["Max"] = "-"
+        summary.append(stats)
+    return pd.DataFrame(summary)
+```
+
+## Table Overview
+
+```{python}
+#| echo: false
+overview = []
+for name, config in TABLES.items():
+    filepath = CLEANED_DIR / config["file"]
+    if filepath.exists():
+        df = load_table(config["file"])
+        rows = len(df)
+    else:
+        rows = "N/A"
+    overview.append({
+        "Table": f"`{config['file']}`",
+        "Description": config["description"],
+        "Primary Key": ", ".join(f"`{k}`" for k in config["primary_key"]),
+        "Rows": rows,
+    })
+pd.DataFrame(overview)
+```
+
+```{python}
+#| echo: false
+#| output: asis
+
+for name, config in TABLES.items():
+    filepath = CLEANED_DIR / config["file"]
+    
+    # Section header
+    print(f"\n## {config['file']}\n")
+    print(f"{config['description']}\n")
+    
+    # Keys
+    print("### Keys\n")
+    print(f"- **Primary Key:** {', '.join(f'`{k}`' for k in config['primary_key'])}")
+    if config["foreign_keys"]:
+        print("- **Foreign Keys:**")
+        for fk, ref in config["foreign_keys"].items():
+            print(f"  - `{fk}` → `{ref}.csv`")
+    else:
+        print("- **Foreign Keys:** None")
+    
+    # Variables
+    print("\n### Variables\n")
+    if config["variables"]:
+        print("| Variable | Type | Unit | Description |")
+        print("|----------|------|------|-------------|")
+        for var, meta in config["variables"].items():
+            print(f"| `{var}` | {meta['type']} | {meta['unit']} | {meta['desc']} |")
+    else:
+        print("*TODO: Define variables in TABLES configuration*")
+    
+    # Summary statistics
+    print("\n### Summary Statistics\n")
+    if filepath.exists():
+        df = load_table(config["file"])
+        summary_df = compute_summary(df)
+        print(summary_df.to_markdown(index=False))
+    else:
+        print("*Run the cleaning pipeline first to generate this table*")
+    
+    print("\n---\n")
+```
