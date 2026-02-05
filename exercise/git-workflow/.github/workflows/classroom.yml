@@ -9,12 +9,16 @@ on:
 permissions:
   contents: read
   issues: read
-  pull-requests: read
+  pull-requests: write
+  checks: write
 
 jobs:
   code-correctness:
     name: Code Correctness (50 points)
     runs-on: ubuntu-latest
+    outputs:
+      result: ${{ steps.test.outcome }}
+      details: ${{ steps.test.outputs.details }}
     steps:
       - uses: actions/checkout@v4
 
@@ -30,14 +34,32 @@ jobs:
         run: uv sync
 
       - name: Run code tests
-        run: uv run pytest tests/test_analysis.py -v
+        id: test
+        continue-on-error: true
+        run: |
+          set +e
+          OUTPUT=$(uv run pytest tests/test_analysis.py -v 2>&1)
+          EXIT_CODE=$?
+          echo "$OUTPUT"
+          
+          # Save output for feedback
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "details<<$EOF" >> $GITHUB_OUTPUT
+          echo "$OUTPUT" >> $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
+          
+          exit $EXIT_CODE
 
       - name: Run analysis script
+        if: steps.test.outcome == 'success'
         run: uv run python scripts/run_analysis.py
 
   git-workflow:
     name: Git Workflow (50 points)
     runs-on: ubuntu-latest
+    outputs:
+      result: ${{ steps.test.outcome }}
+      details: ${{ steps.test.outputs.details }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -55,7 +77,151 @@ jobs:
         run: uv sync
 
       - name: Run workflow tests
-        run: uv run pytest tests/test_workflow.py -v
+        id: test
+        continue-on-error: true
+        run: |
+          set +e
+          OUTPUT=$(uv run pytest tests/test_workflow.py -v 2>&1)
+          EXIT_CODE=$?
+          echo "$OUTPUT"
+          
+          # Save output for feedback
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "details<<$EOF" >> $GITHUB_OUTPUT
+          echo "$OUTPUT" >> $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
+          
+          exit $EXIT_CODE
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GH_TOKEN: ${{ github.token }}
+
+  feedback:
+    name: Post Feedback
+    runs-on: ubuntu-latest
+    needs: [code-correctness, git-workflow]
+    if: always() && github.event_name == 'pull_request'
+    steps:
+      - name: Generate feedback comment
+        id: feedback
+        run: |
+          CODE_RESULT="${{ needs.code-correctness.outputs.result }}"
+          WORKFLOW_RESULT="${{ needs.git-workflow.outputs.result }}"
+          
+          # Calculate score
+          CODE_POINTS=0
+          WORKFLOW_POINTS=0
+          
+          if [ "$CODE_RESULT" == "success" ]; then
+            CODE_POINTS=50
+            CODE_EMOJI="✅"
+          else
+            CODE_EMOJI="❌"
+          fi
+          
+          if [ "$WORKFLOW_RESULT" == "success" ]; then
+            WORKFLOW_POINTS=50
+            WORKFLOW_EMOJI="✅"
+          else
+            WORKFLOW_EMOJI="❌"
+          fi
+          
+          TOTAL=$((CODE_POINTS + WORKFLOW_POINTS))
+          
+          # Build comment
+          cat << 'COMMENT_EOF' > comment.md
+          ## 📊 Autograding Results
+          
+          | Component | Status | Points |
+          |-----------|--------|--------|
+          COMMENT_EOF
+          
+          echo "| Code Correctness | $CODE_EMOJI | $CODE_POINTS/50 |" >> comment.md
+          echo "| Git Workflow | $WORKFLOW_EMOJI | $WORKFLOW_POINTS/50 |" >> comment.md
+          echo "| **Total** | | **$TOTAL/100** |" >> comment.md
+          echo "" >> comment.md
+          
+          # Add feedback based on results
+          if [ "$CODE_RESULT" != "success" ]; then
+            cat << 'FEEDBACK_EOF' >> comment.md
+          ### ❌ Code Correctness Issues
+          
+          The `calculate_mean` function is not working correctly. Make sure:
+          
+          - The function returns the arithmetic mean (sum divided by count)
+          - It handles the input list correctly
+          - Check the test output in the Actions tab for details
+          
+          **Hint:** `return sum(numbers) / len(numbers)`
+          
+          FEEDBACK_EOF
+          fi
+          
+          if [ "$WORKFLOW_RESULT" != "success" ]; then
+            cat << 'FEEDBACK_EOF' >> comment.md
+          ### ❌ Git Workflow Issues
+          
+          Your git workflow needs improvement. Common issues:
+          
+          - **Commit messages**: Start with a verb (Add, Fix, Implement), be descriptive
+          - **Issue references**: Include `closes #1` or `fixes #1` in commit message
+          - **Minimal commits**: Only change files relevant to the commit
+          - **Multiple commits**: Don't squash everything into one commit
+          
+          Check the test output in the Actions tab for specific issues.
+          
+          FEEDBACK_EOF
+          fi
+          
+          if [ "$TOTAL" == "100" ]; then
+            cat << 'FEEDBACK_EOF' >> comment.md
+          ### 🎉 Excellent Work!
+          
+          All tests passed. You have successfully:
+          - Implemented the `calculate_mean` function correctly
+          - Followed proper git workflow practices
+          - Written good commit messages
+          - Used issues and pull requests effectively
+          
+          FEEDBACK_EOF
+          fi
+          
+          echo "" >> comment.md
+          echo "---" >> comment.md
+          echo "*This is an automated review. Check the Actions tab for detailed test output.*" >> comment.md
+
+      - name: Post comment to PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const comment = fs.readFileSync('comment.md', 'utf8');
+            
+            // Find existing bot comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            
+            const botComment = comments.find(c => 
+              c.user.type === 'Bot' && c.body.includes('Autograding Results')
+            );
+            
+            if (botComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: comment
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: comment
+              });
+            }
