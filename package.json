@@ -1,0 +1,29 @@
+{
+  "name": "economics",
+  "version": "1.0.0",
+  "description": "Before working with the project dependencies, ensure you have the following tools installed:",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "man": "man",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kohei-kawaguchi/Economics.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/kohei-kawaguchi/Economics/issues"
+  },
+  "homepage": "https://github.com/kohei-kawaguchi/Economics#readme",
+  "devDependencies": {
+    "@marp-team/marp-cli": "^4.2.3"
+  }
+}

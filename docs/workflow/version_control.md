@@ -2,6 +2,24 @@
 
 This document outlines a simple and effective git workflow for individual and team projects.
 
+## Repository and Worktree
+
+- **Repository**: The Git database (history, branches, tags). Stored in `.git`.
+- **Worktree**: The directory of files you edit. Your current branch's snapshot, plus any uncommitted changes.
+
+## Local and Remote Repository
+
+- **Local repository**: On your machine. It holds the full history and your working copy.
+- **Remote repository**: A hosted copy (e.g. on GitHub). It is the shared source of truth; others push and pull from it.
+- You keep them in sync using push and pull.
+
+## Core Concepts
+
+- **Staging**: Mark which changes to include in the next snapshot (`git add`).
+- **Commit**: Save a snapshot of staged changes in your local history (`git commit`).
+- **Push**: Send your commits from local to remote (`git push`).
+- **Pull**: Bring remote commits into your local repository and working tree (`git pull`).
+
 ## Basic Git Workflow
 
 1. **Clone the repository**
