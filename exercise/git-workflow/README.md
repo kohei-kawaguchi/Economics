@@ -84,6 +84,23 @@ git push -u origin <branch-name>
 3. Click "Confirm merge"
 4. Check that your issue is now closed
 
+## Grading Criteria
+
+Your submission is graded on two components:
+
+**Code Correctness (50 points)**
+- `calculate_mean` function returns correct results
+
+**Git Workflow (50 points)**
+- Multiple commits (not everything in one commit)
+- Commit message references issue (e.g., `closes #1`)
+- Commit messages start with verb (Add, Fix, Update, etc.)
+- Commit messages are descriptive (not generic like "update" or "fix")
+- Commit messages mention relevant content (e.g., "mean" when implementing mean)
+- Implementation commit only modifies `analysis.py` (minimal)
+- Issue is closed
+- Pull request is merged
+
 ## Verification
 
 After completing all steps, verify:
@@ -91,7 +108,8 @@ After completing all steps, verify:
 - [ ] Issue #1 is closed
 - [ ] Pull request is merged
 - [ ] `main` branch contains your changes
-- [ ] All tests pass: `uv run pytest tests/test_analysis.py -v`
+- [ ] Code tests pass: `uv run pytest tests/test_analysis.py -v`
+- [ ] Workflow tests pass: `uv run pytest tests/test_workflow.py -v`
 
 ## Reference
 

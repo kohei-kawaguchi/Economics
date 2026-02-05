@@ -1,14 +1,24 @@
 {
   "tests": [
     {
-      "name": "Calculate Mean",
+      "name": "Code Correctness",
       "setup": "pip install uv && uv sync",
       "run": "uv run pytest tests/test_analysis.py -v",
       "input": "",
       "output": "",
       "comparison": "included",
       "timeout": 60,
-      "points": 100
+      "points": 50
+    },
+    {
+      "name": "Git Workflow",
+      "setup": "",
+      "run": "uv run pytest tests/test_workflow.py -v",
+      "input": "",
+      "output": "",
+      "comparison": "included",
+      "timeout": 60,
+      "points": 50
     }
   ]
 }
