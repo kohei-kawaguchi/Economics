@@ -252,3 +252,56 @@ renv::update()
 renv::update("package-name")
 ```
 
+## Practice Exercises
+
+The `exercise/` folder contains practice exercises for learning project management workflows.
+
+### Available Exercises
+
+| Exercise | Description | Key Concepts |
+|----------|-------------|--------------|
+| `git-workflow` | Practice issue-based git workflow | Branches, commits, PRs, issues |
+| `data-pipeline` | Build a data pipeline with cleaning and analysis | 3NF, data cleaning vs analysis, codebook |
+
+### How to Use
+
+1. Copy the exercise folder to a new location outside this repository:
+
+   ```bash
+   cp -r exercise/git-workflow ~/practice/git-workflow
+   cd ~/practice/git-workflow
+   ```
+
+2. Initialize a new git repository:
+
+   ```bash
+   git init
+   git add .
+   git commit -m "Initial commit"
+   ```
+
+3. Create a repository on GitHub and push:
+
+   ```bash
+   git remote add origin https://github.com/YOUR-USERNAME/git-workflow-practice.git
+   git push -u origin main
+   ```
+
+4. Follow the instructions in the exercise's `README.md`
+
+5. Run tests to verify your work:
+
+   ```bash
+   uv sync
+   uv run pytest tests/ -v
+   ```
+
+### Reference Documentation
+
+Each exercise corresponds to workflow documentation in `docs/workflow/`:
+
+| Exercise | Documentation |
+|----------|---------------|
+| `git-workflow` | `docs/workflow/version_control.md` |
+| `data-pipeline` | `docs/workflow/data_pipeline.md` |
+
