@@ -1,0 +1,242 @@
+name: Autograding Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: write
+  checks: write
+
+jobs:
+  data-cleaning:
+    name: Data Cleaning (40 points)
+    runs-on: ubuntu-latest
+    outputs:
+      result: ${{ steps.test.outcome }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Run cleaning tests
+        id: test
+        continue-on-error: true
+        run: uv run pytest tests/test_cleaning.py -v
+
+  analysis:
+    name: Analysis (30 points)
+    runs-on: ubuntu-latest
+    outputs:
+      result: ${{ steps.test.outcome }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Run analysis tests
+        id: test
+        continue-on-error: true
+        run: uv run pytest tests/test_analysis.py -v
+
+  git-workflow:
+    name: Git Workflow (30 points)
+    runs-on: ubuntu-latest
+    outputs:
+      result: ${{ steps.test.outcome }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Run workflow tests
+        id: test
+        continue-on-error: true
+        run: uv run pytest tests/test_workflow.py -v
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+
+  feedback:
+    name: Post Feedback
+    runs-on: ubuntu-latest
+    needs: [data-cleaning, analysis, git-workflow]
+    if: always() && github.event_name == 'pull_request'
+    steps:
+      - name: Generate feedback comment
+        run: |
+          CLEANING_RESULT="${{ needs.data-cleaning.outputs.result }}"
+          ANALYSIS_RESULT="${{ needs.analysis.outputs.result }}"
+          WORKFLOW_RESULT="${{ needs.git-workflow.outputs.result }}"
+          
+          # Calculate score
+          CLEANING_POINTS=0
+          ANALYSIS_POINTS=0
+          WORKFLOW_POINTS=0
+          
+          if [ "$CLEANING_RESULT" == "success" ]; then
+            CLEANING_POINTS=40
+            CLEANING_EMOJI="✅"
+          else
+            CLEANING_EMOJI="❌"
+          fi
+          
+          if [ "$ANALYSIS_RESULT" == "success" ]; then
+            ANALYSIS_POINTS=30
+            ANALYSIS_EMOJI="✅"
+          else
+            ANALYSIS_EMOJI="❌"
+          fi
+          
+          if [ "$WORKFLOW_RESULT" == "success" ]; then
+            WORKFLOW_POINTS=30
+            WORKFLOW_EMOJI="✅"
+          else
+            WORKFLOW_EMOJI="❌"
+          fi
+          
+          TOTAL=$((CLEANING_POINTS + ANALYSIS_POINTS + WORKFLOW_POINTS))
+          
+          # Build comment
+          cat << 'COMMENT_EOF' > comment.md
+          ## 📊 Autograding Results
+          
+          | Component | Status | Points |
+          |-----------|--------|--------|
+          COMMENT_EOF
+          
+          echo "| Data Cleaning (3NF) | $CLEANING_EMOJI | $CLEANING_POINTS/40 |" >> comment.md
+          echo "| Analysis | $ANALYSIS_EMOJI | $ANALYSIS_POINTS/30 |" >> comment.md
+          echo "| Git Workflow | $WORKFLOW_EMOJI | $WORKFLOW_POINTS/30 |" >> comment.md
+          echo "| **Total** | | **$TOTAL/100** |" >> comment.md
+          echo "" >> comment.md
+          
+          if [ "$CLEANING_RESULT" != "success" ]; then
+            cat << 'FEEDBACK_EOF' >> comment.md
+          ### ❌ Data Cleaning Issues
+          
+          Your cleaning functions need work. Remember:
+          
+          **Stage 1 is ANALYSIS-AGNOSTIC:**
+          - `extract_customers`: Return unique customers (no duplicates by customer_id)
+          - `extract_products`: Return unique products (no duplicates by product_id)
+          - `extract_orders`: Return orders WITHOUT redundant columns (no customer_name, customer_city, product_name, product_price)
+          
+          **3NF means no redundancy:**
+          - Customer info stored ONCE in customers table
+          - Product info stored ONCE in products table
+          - Orders only reference customer_id and product_id
+          
+          FEEDBACK_EOF
+          fi
+          
+          if [ "$ANALYSIS_RESULT" != "success" ]; then
+            cat << 'FEEDBACK_EOF' >> comment.md
+          ### ❌ Analysis Issues
+          
+          Your analysis function needs work:
+          
+          **`compute_customer_summary` should:**
+          - Join orders with products to get prices
+          - Calculate total_orders: count of orders per customer
+          - Calculate total_spending: sum of (quantity * price) per customer
+          - Include customer_name from customers table
+          
+          FEEDBACK_EOF
+          fi
+          
+          if [ "$WORKFLOW_RESULT" != "success" ]; then
+            cat << 'FEEDBACK_EOF' >> comment.md
+          ### ❌ Git Workflow Issues
+          
+          Check your git practices:
+          - Commit messages should start with a verb (Add, Implement, Fix)
+          - Reference issues in commits (closes #1)
+          - Make multiple commits, not just one
+          
+          FEEDBACK_EOF
+          fi
+          
+          if [ "$TOTAL" == "100" ]; then
+            cat << 'FEEDBACK_EOF' >> comment.md
+          ### 🎉 Excellent Work!
+          
+          All tests passed. You have successfully:
+          - Implemented data cleaning with proper 3NF normalization
+          - Built analysis that correctly uses cleaned data
+          - Followed proper git workflow practices
+          
+          **Key takeaway:** Cleaning (input→cleaned) is analysis-agnostic. Analysis (cleaned→output) answers specific questions.
+          
+          FEEDBACK_EOF
+          fi
+          
+          echo "" >> comment.md
+          echo "---" >> comment.md
+          echo "*This is an automated review. Check the Actions tab for detailed test output.*" >> comment.md
+
+      - name: Post comment to PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const comment = fs.readFileSync('comment.md', 'utf8');
+            
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            
+            const botComment = comments.find(c => 
+              c.user.type === 'Bot' && c.body.includes('Autograding Results')
+            );
+            
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: comment
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: comment
+              });
+            }

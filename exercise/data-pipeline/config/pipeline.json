@@ -1,0 +1,32 @@
+{
+    "input_file": "input/sales.csv",
+    "cleaned_dir": "cleaned",
+    "output_dir": "output",
+    "tables": {
+        "customers": {
+            "filename": "customers.csv",
+            "columns": ["customer_id", "customer_name", "customer_city"],
+            "primary_key": "customer_id"
+        },
+        "products": {
+            "filename": "products.csv",
+            "columns": ["product_id", "product_name", "product_price"],
+            "primary_key": "product_id"
+        },
+        "orders": {
+            "filename": "orders.csv",
+            "columns": ["order_id", "customer_id", "product_id", "quantity", "order_date"],
+            "primary_key": "order_id",
+            "foreign_keys": {
+                "customer_id": "customers",
+                "product_id": "products"
+            }
+        }
+    },
+    "analysis": {
+        "customer_summary": {
+            "filename": "customer_summary.csv",
+            "description": "Total spending and order count per customer"
+        }
+    }
+}
