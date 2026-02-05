@@ -48,7 +48,11 @@ Practice the issue-based git workflow by completing a simple coding task.
 2. Implement the `calculate_mean` function (replace the TODO)
 3. Test your code:
    ```bash
-   python analysis.py
+   uv run python analysis.py
+   ```
+4. Run the tests to verify:
+   ```bash
+   uv run pytest tests/test_analysis.py -v
    ```
 
 ### Step 4: Commit Your Changes
@@ -87,7 +91,7 @@ After completing all steps, verify:
 - [ ] Issue #1 is closed
 - [ ] Pull request is merged
 - [ ] `main` branch contains your changes
-- [ ] `calculate_mean` function works correctly
+- [ ] All tests pass: `uv run pytest tests/test_analysis.py -v`
 
 ## Reference
 

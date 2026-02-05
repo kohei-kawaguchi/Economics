@@ -1,0 +1,14 @@
+{
+  "tests": [
+    {
+      "name": "Calculate Mean",
+      "setup": "pip install uv && uv sync",
+      "run": "uv run pytest tests/test_analysis.py -v",
+      "input": "",
+      "output": "",
+      "comparison": "included",
+      "timeout": 60,
+      "points": 100
+    }
+  ]
+}
