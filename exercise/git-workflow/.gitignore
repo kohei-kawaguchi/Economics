@@ -23,3 +23,10 @@ ENV/
 # OS
 .DS_Store
 Thumbs.db
+
+# Output files (keep .gitkeep)
+output/*
+!output/.gitkeep
+
+# uv
+uv.lock

@@ -29,8 +29,11 @@ jobs:
       - name: Install dependencies
         run: uv sync
 
-      - name: Run tests
+      - name: Run code tests
         run: uv run pytest tests/test_analysis.py -v
+
+      - name: Run analysis script
+        run: uv run python scripts/run_analysis.py
 
   git-workflow:
     name: Git Workflow (50 points)
@@ -51,7 +54,7 @@ jobs:
       - name: Install dependencies
         run: uv sync
 
-      - name: Run tests
+      - name: Run workflow tests
         run: uv run pytest tests/test_workflow.py -v
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}

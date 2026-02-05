@@ -1,0 +1,5 @@
+{
+    "input_file": "input/numbers.csv",
+    "output_file": "output/results.json",
+    "column_name": "value"
+}
