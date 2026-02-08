@@ -67,12 +67,14 @@ data-pipeline/
 
 ## Exercise Steps
 
-### Step 1: Create an Issue
+### Step 1: Create issues for meaningful units
 
-1. Go to your repository on GitHub
-2. Click "Issues" > "New issue"
-3. Title: `Implement data pipeline`
-4. Click "Submit new issue"
+Create separate issues, one per meaningful unit of work. Use titles like these:
+
+- `Implement Stage 1 cleaning functions`
+- `Implement Stage 2 analysis function`
+- `Complete codebook`
+- `Run full pipeline and verify outputs`
 
 ### Step 2: Create a Branch
 
@@ -142,7 +144,8 @@ uv run pytest tests/test_codebook.py -v
 
 ```bash
 git add src/pipeline.py report/codebook.qmd
-git commit -m "Implement data pipeline and codebook, closes #1"
+git commit -m "Implement cleaning and analysis, closes #1 closes #2"
+git commit -m "Complete codebook, closes #3"
 git push -u origin feature/implement-pipeline
 ```
 
