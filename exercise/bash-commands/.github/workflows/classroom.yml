@@ -142,6 +142,7 @@ jobs:
           - Create sandbox/scripts/hello.sh with the required contents
           - Make hello.sh executable with chmod +x
           - Edit sandbox/notes/vim_exercise.txt to match the expected contents
+          - Add the PATH export and sourcing lines in sandbox/dotfiles
 
           FEEDBACK_EOF
           fi

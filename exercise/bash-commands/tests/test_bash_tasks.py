@@ -21,6 +21,9 @@ def test_commands_txt_contains_required_lines_once_each():
         "mkdir -p sandbox/notes",
         "touch sandbox/notes/commands.txt",
         "vim sandbox/notes/vim_exercise.txt",
+        "mkdir -p sandbox/dotfiles",
+        "vim sandbox/dotfiles/.bashrc",
+        "vim sandbox/dotfiles/.bash_profile",
         "chmod +x sandbox/scripts/hello.sh",
     ]
 
@@ -51,4 +54,18 @@ def test_vim_exercise_file_matches_expected_content():
         ":%s/old/new/g: replace all\n"
     )
     assert text == expected, "Edit sandbox/notes/vim_exercise.txt to match the target text in report/answers.md"
+
+
+def test_bashrc_contains_persistent_path_export_once():
+    bashrc_path = REPO_ROOT / "sandbox" / "dotfiles" / ".bashrc"
+    text = read_text(path=bashrc_path).replace("\r\n", "\n")
+    line = 'export PATH="$HOME/bin:$PATH"'
+    assert text.count(line) == 1, "Add export PATH line to sandbox/dotfiles/.bashrc exactly once"
+
+
+def test_bash_profile_sources_bashrc_once():
+    profile_path = REPO_ROOT / "sandbox" / "dotfiles" / ".bash_profile"
+    text = read_text(path=profile_path).replace("\r\n", "\n")
+    line = 'source "$HOME/.bashrc"'
+    assert text.count(line) == 1, "Add source line to sandbox/dotfiles/.bash_profile exactly once"
 

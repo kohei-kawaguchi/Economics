@@ -15,6 +15,9 @@ cd ..
 mkdir -p sandbox/notes
 touch sandbox/notes/commands.txt
 vim sandbox/notes/vim_exercise.txt
+mkdir -p sandbox/dotfiles
+vim sandbox/dotfiles/.bashrc
+vim sandbox/dotfiles/.bash_profile
 chmod +x sandbox/scripts/hello.sh
 ```
 
@@ -35,5 +38,19 @@ Esc: normal mode
 :wq: save and quit
 /word: search forward
 :%s/old/new/g: replace all
+```
+
+## Persistent PATH exercise
+
+Edit `sandbox/dotfiles/.bashrc` so that it contains the line below exactly once.
+
+```bash
+export PATH="$HOME/bin:$PATH"
+```
+
+Edit `sandbox/dotfiles/.bash_profile` so that it sources `.bashrc` using the line below exactly once.
+
+```bash
+source "$HOME/.bashrc"
 ```
 
