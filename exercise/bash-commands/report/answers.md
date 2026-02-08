@@ -1,6 +1,6 @@
 # Answers
 
-Use `docs/workflow/bash_commands.md` as a reference. Replace every TODO in this file. Then create the files under `sandbox/` and commit them.
+Use `docs/workflow/bash_commands.md` in the Economics repository as a reference. Replace every TODO in this file. Then create the files under `sandbox/` and commit them.
 
 ## Commands you used
 
