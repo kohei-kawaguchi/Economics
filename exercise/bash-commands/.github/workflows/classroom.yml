@@ -138,7 +138,6 @@ jobs:
 
           Make sure you:
 
-          - Replace every TODO in report/answers.md
           - Create sandbox/notes/commands.txt with the required command lines
           - Create sandbox/scripts/hello.sh with the required contents
           - Make hello.sh executable with chmod +x

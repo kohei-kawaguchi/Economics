@@ -3,6 +3,7 @@
 import os
 import re
 import subprocess
+from pathlib import Path
 
 
 def run_git(args):
@@ -25,9 +26,21 @@ def run_gh(args):
     return result.stdout.strip()
 
 
+def get_git_root() -> Path:
+    return Path(run_git(["rev-parse", "--show-toplevel"]))
+
+
+def get_assignment_pathspec() -> str:
+    git_root = get_git_root()
+    assignment_root = Path(__file__).parent.parent.resolve()
+    rel = os.path.relpath(assignment_root, start=git_root)
+    return rel
+
+
 def get_commits():
     """Get list of commits (hash, message, files changed)."""
-    log = run_git(["log", "--pretty=format:%H|%s", "--name-only"])
+    pathspec = get_assignment_pathspec()
+    log = run_git(["log", "--pretty=format:%H|%s", "--name-only", "--", pathspec])
     commits = []
     current_commit = None
 
