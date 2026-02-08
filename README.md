@@ -262,6 +262,7 @@ The `exercise/` folder contains practice exercises for learning project manageme
 |----------|-------------|--------------|
 | `git-workflow` | Practice issue-based git workflow | Branches, commits, PRs, issues |
 | `data-pipeline` | Build a data pipeline with cleaning and analysis | 3NF, data cleaning vs analysis, codebook |
+| `bash-commands` | Practice essential bash commands and vim | Terminal navigation, files, permissions, vim |
 
 ### How to Use
 
@@ -292,7 +293,7 @@ The `exercise/` folder contains practice exercises for learning project manageme
 5. Run tests to verify your work:
 
    ```bash
-   uv sync
+   uv sync --extra dev
    uv run pytest tests/ -v
    ```
 
@@ -302,6 +303,7 @@ Each exercise corresponds to workflow documentation in `docs/workflow/`:
 
 | Exercise | Documentation |
 |----------|---------------|
+| `bash-commands` | `docs/workflow/bash_commands.md` |
 | `git-workflow` | `docs/workflow/version_control.md` |
 | `data-pipeline` | `docs/workflow/data_pipeline.md` |
 

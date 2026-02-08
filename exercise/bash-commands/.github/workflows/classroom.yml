@@ -1,0 +1,208 @@
+name: Autograding Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: write
+  checks: write
+
+jobs:
+  bash-tasks:
+    name: Bash Tasks (70 points)
+    runs-on: ubuntu-latest
+    outputs:
+      result: ${{ steps.test.outcome }}
+      details: ${{ steps.test.outputs.details }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Run bash task tests
+        id: test
+        continue-on-error: true
+        run: |
+          set +e
+          OUTPUT=$(uv run pytest tests/test_bash_tasks.py -v 2>&1)
+          EXIT_CODE=$?
+          echo "$OUTPUT"
+
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "details<<$EOF" >> $GITHUB_OUTPUT
+          echo "$OUTPUT" >> $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
+
+          exit $EXIT_CODE
+
+  git-workflow:
+    name: Git Workflow (30 points)
+    runs-on: ubuntu-latest
+    outputs:
+      result: ${{ steps.test.outcome }}
+      details: ${{ steps.test.outputs.details }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Run workflow tests
+        id: test
+        continue-on-error: true
+        run: |
+          set +e
+          OUTPUT=$(uv run pytest tests/test_workflow.py -v 2>&1)
+          EXIT_CODE=$?
+          echo "$OUTPUT"
+
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "details<<$EOF" >> $GITHUB_OUTPUT
+          echo "$OUTPUT" >> $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
+
+          exit $EXIT_CODE
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+
+  feedback:
+    name: Post Feedback
+    runs-on: ubuntu-latest
+    needs: [bash-tasks, git-workflow]
+    if: always() && github.event_name == 'pull_request'
+    steps:
+      - name: Generate feedback comment
+        run: |
+          BASH_RESULT="${{ needs.bash-tasks.outputs.result }}"
+          WORKFLOW_RESULT="${{ needs.git-workflow.outputs.result }}"
+
+          BASH_POINTS=0
+          WORKFLOW_POINTS=0
+
+          if [ "$BASH_RESULT" == "success" ]; then
+            BASH_POINTS=70
+            BASH_EMOJI="✅"
+          else
+            BASH_EMOJI="❌"
+          fi
+
+          if [ "$WORKFLOW_RESULT" == "success" ]; then
+            WORKFLOW_POINTS=30
+            WORKFLOW_EMOJI="✅"
+          else
+            WORKFLOW_EMOJI="❌"
+          fi
+
+          TOTAL=$((BASH_POINTS + WORKFLOW_POINTS))
+
+          cat << 'COMMENT_EOF' > comment.md
+          ## 📊 Autograding Results
+
+          | Component | Status | Points |
+          |-----------|--------|--------|
+          COMMENT_EOF
+
+          echo "| Bash Tasks | $BASH_EMOJI | $BASH_POINTS/70 |" >> comment.md
+          echo "| Git Workflow | $WORKFLOW_EMOJI | $WORKFLOW_POINTS/30 |" >> comment.md
+          echo "| Total |  | $TOTAL/100 |" >> comment.md
+          echo "" >> comment.md
+
+          if [ "$BASH_RESULT" != "success" ]; then
+            cat << 'FEEDBACK_EOF' >> comment.md
+          ### Bash tasks issues
+
+          Make sure you:
+
+          - Replace every TODO in report/answers.md
+          - Create sandbox/notes/commands.txt with the required command lines
+          - Create sandbox/scripts/hello.sh with the required contents
+          - Make hello.sh executable with chmod +x
+
+          FEEDBACK_EOF
+          fi
+
+          if [ "$WORKFLOW_RESULT" != "success" ]; then
+            cat << 'FEEDBACK_EOF' >> comment.md
+          ### Git workflow issues
+
+          Make sure you:
+
+          - Use multiple commits
+          - Reference the issue number in at least one commit (closes #1)
+          - Use descriptive commit messages that start with a verb
+          - Create a pull request and merge it
+
+          FEEDBACK_EOF
+          fi
+
+          if [ "$TOTAL" == "100" ]; then
+            cat << 'FEEDBACK_EOF' >> comment.md
+          ### Excellent work
+
+          All tests passed.
+
+          FEEDBACK_EOF
+          fi
+
+          echo "" >> comment.md
+          echo "---" >> comment.md
+          echo "*This is an automated review. Check the Actions tab for detailed test output.*" >> comment.md
+
+      - name: Post comment to PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const comment = fs.readFileSync('comment.md', 'utf8');
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(c =>
+              c.user.type === 'Bot' && c.body.includes('Autograding Results')
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: comment
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: comment
+              });
+            }
+
