@@ -114,6 +114,20 @@ export VAR_NAME="value"             # Set for current session
 export PATH=$PATH:/new/path         # Append to PATH
 ```
 
+### Making PATH changes persistent
+
+The `export` commands above change environment variables only for the current shell session. If you want the change to apply every time you open a new terminal, put the `export` line into a shell startup file.
+
+In bash, interactive non login shells typically read `~/.bashrc`. Login shells typically read `~/.bash_profile` or `~/.profile`. A common setup is to put interactive settings in `~/.bashrc` and have `~/.bash_profile` source `~/.bashrc`.
+
+On macOS, the default shell is often zsh. In that case, the corresponding files are usually `~/.zshrc` for interactive settings and `~/.zprofile` for login shells.
+
+Example of adding a directory to `PATH` persistently:
+
+```bash
+export PATH="$HOME/bin:$PATH"
+```
+
 ### Input/Output Redirection
 
 ```bash
