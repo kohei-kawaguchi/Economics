@@ -14,6 +14,7 @@ ls -la
 cd ..
 mkdir -p sandbox/notes
 touch sandbox/notes/commands.txt
+vim sandbox/notes/vim_exercise.txt
 chmod +x sandbox/scripts/hello.sh
 ```
 
@@ -22,5 +23,17 @@ Verify that `sandbox/scripts/hello.sh` has the contents below and make it execut
 ```bash
 #!/usr/bin/env bash
 echo "hello"
+```
+
+## Vim exercises
+
+Open `sandbox/notes/vim_exercise.txt` in vim and edit it so that it matches the content below exactly.
+
+```text
+i: insert before cursor
+Esc: normal mode
+:wq: save and quit
+/word: search forward
+:%s/old/new/g: replace all
 ```
 

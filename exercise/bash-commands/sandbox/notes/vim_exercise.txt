@@ -1,0 +1,6 @@
+i insert before cursor
+Esc normal mode
+wq save and quit
+word search forward
+%s old new g replace all
+

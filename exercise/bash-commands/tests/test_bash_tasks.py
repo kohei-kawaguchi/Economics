@@ -20,6 +20,7 @@ def test_commands_txt_contains_required_lines_once_each():
         "cd ..",
         "mkdir -p sandbox/notes",
         "touch sandbox/notes/commands.txt",
+        "vim sandbox/notes/vim_exercise.txt",
         "chmod +x sandbox/scripts/hello.sh",
     ]
 
@@ -37,4 +38,17 @@ def test_hello_script_content_and_executable():
 
     mode = script_path.stat().st_mode
     assert (mode & 0o111) != 0, "Make sandbox/scripts/hello.sh executable with chmod +x"
+
+
+def test_vim_exercise_file_matches_expected_content():
+    exercise_path = REPO_ROOT / "sandbox" / "notes" / "vim_exercise.txt"
+    text = read_text(path=exercise_path).replace("\r\n", "\n")
+    expected = (
+        "i: insert before cursor\n"
+        "Esc: normal mode\n"
+        ":wq: save and quit\n"
+        "/word: search forward\n"
+        ":%s/old/new/g: replace all\n"
+    )
+    assert text == expected, "Edit sandbox/notes/vim_exercise.txt to match the target text in report/answers.md"
 

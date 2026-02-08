@@ -27,7 +27,7 @@ Accept this assignment on GitHub Classroom and clone your repository.
 
 Create an issue on GitHub titled `Complete bash commands exercise`. Create a branch from the issue and check it out locally.
 
-Read `docs/workflow/bash_commands.md` in the Economics repository and use it as a reference. Follow the instructions in `report/answers.md` and complete the exercises by editing the files under `sandbox/`.
+Read `docs/workflow/bash_commands.md` in the Economics repository and use it as a reference. Follow the instructions in `report/answers.md` and complete the exercises by editing the files under `sandbox/`, including the vim exercise.
 
 Run tests locally:
 
