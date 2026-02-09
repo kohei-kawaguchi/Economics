@@ -4,9 +4,11 @@
 #
 # Usage:
 #   ./scripts/publish_exercise.sh <exercise-folder> <github-org>
+#   ./scripts/publish_exercise.sh --all <github-org>
 #
 # Example:
 #   ./scripts/publish_exercise.sh git-workflow my-org
+#   ./scripts/publish_exercise.sh --all my-org
 #
 # This will:
 #   1. Create a new repository 'git-workflow' in 'my-org'
@@ -15,27 +17,25 @@
 
 set -e
 
+MODE="$1"
 EXERCISE_NAME="$1"
 GITHUB_ORG="$2"
 
-if [ -z "$EXERCISE_NAME" ] || [ -z "$GITHUB_ORG" ]; then
-    echo "Usage: $0 <exercise-folder> <github-org>"
-    echo "Example: $0 git-workflow my-org"
-    exit 1
+if [ "$MODE" = "--all" ]; then
+    if [ -z "$GITHUB_ORG" ]; then
+        echo "Usage: $0 --all <github-org>"
+        echo "Example: $0 --all my-org"
+        exit 1
+    fi
+else
+    if [ -z "$EXERCISE_NAME" ] || [ -z "$GITHUB_ORG" ]; then
+        echo "Usage: $0 <exercise-folder> <github-org>"
+        echo "Example: $0 git-workflow my-org"
+        echo "Usage: $0 --all <github-org>"
+        echo "Example: $0 --all my-org"
+        exit 1
+    fi
 fi
-
-EXERCISE_DIR="exercise/$EXERCISE_NAME"
-REPO_NAME="$EXERCISE_NAME"
-
-if [ ! -d "$EXERCISE_DIR" ]; then
-    echo "Error: Exercise directory '$EXERCISE_DIR' does not exist"
-    exit 1
-fi
-
-echo "Publishing exercise: $EXERCISE_NAME"
-echo "  Source: $EXERCISE_DIR"
-echo "  Target: $GITHUB_ORG/$REPO_NAME"
-echo ""
 
 # Find gh command (handle Windows Git Bash PATH issue)
 GH_CMD=""
@@ -63,43 +63,74 @@ if ! "$GH_CMD" auth status &> /dev/null; then
     exit 1
 fi
 
-# Create repository on GitHub (skip if already exists)
-if "$GH_CMD" repo view "$GITHUB_ORG/$REPO_NAME" &> /dev/null; then
-    echo "Repository $GITHUB_ORG/$REPO_NAME already exists, updating..."
+publish_one() {
+    local exercise_name="$1"
+    local github_org="$2"
+
+    local exercise_dir="exercise/$exercise_name"
+    local repo_name="$exercise_name"
+
+    if [ ! -d "$exercise_dir" ]; then
+        echo "Error: Exercise directory '$exercise_dir' does not exist"
+        exit 1
+    fi
+
+    echo "Publishing exercise: $exercise_name"
+    echo "  Source: $exercise_dir"
+    echo "  Target: $github_org/$repo_name"
+    echo ""
+
+    # Create repository on GitHub (skip if already exists)
+    if "$GH_CMD" repo view "$github_org/$repo_name" &> /dev/null; then
+        echo "Repository $github_org/$repo_name already exists, updating..."
+    else
+        echo "Creating repository $github_org/$repo_name..."
+        "$GH_CMD" repo create "$github_org/$repo_name" \
+            --public \
+            --description "Exercise: $exercise_name" \
+            --clone=false
+    fi
+
+    # Initialize git and push
+    (
+        cd "$exercise_dir"
+
+        # Remove existing .git if present (in case of re-run)
+        if [ -d ".git" ]; then
+            rm -rf .git
+        fi
+
+        git init
+        git add .
+        git commit -m "Update exercise"
+        git branch -M main
+        git remote add origin "https://github.com/$github_org/$repo_name.git"
+        git push -u origin main --force
+    )
+
+    # Mark as template repository (if not already)
+    echo ""
+    echo "Ensuring repository is marked as template..."
+    "$GH_CMD" repo edit "$github_org/$repo_name" --template 2>/dev/null || true
+
+    echo ""
+    echo "Done!"
+    echo ""
+    echo "Repository: https://github.com/$github_org/$repo_name"
+    echo ""
+    echo "Next steps:"
+    echo "  1. Go to GitHub Classroom"
+    echo "  2. Create a new assignment"
+    echo "  3. Select '$github_org/$repo_name' as the template repository"
+}
+
+if [ "$MODE" = "--all" ]; then
+    for d in exercise/*/; do
+        publish_one "$(basename "$d")" "$GITHUB_ORG"
+        echo ""
+        echo "----------------------------------------"
+        echo ""
+    done
 else
-    echo "Creating repository $GITHUB_ORG/$REPO_NAME..."
-    "$GH_CMD" repo create "$GITHUB_ORG/$REPO_NAME" \
-        --public \
-        --description "Exercise: $EXERCISE_NAME" \
-        --clone=false
+    publish_one "$EXERCISE_NAME" "$GITHUB_ORG"
 fi
-
-# Initialize git and push
-cd "$EXERCISE_DIR"
-
-# Remove existing .git if present (in case of re-run)
-if [ -d ".git" ]; then
-    rm -rf .git
-fi
-
-git init
-git add .
-git commit -m "Update exercise"
-git branch -M main
-git remote add origin "https://github.com/$GITHUB_ORG/$REPO_NAME.git"
-git push -u origin main --force
-
-# Mark as template repository (if not already)
-echo ""
-echo "Ensuring repository is marked as template..."
-"$GH_CMD" repo edit "$GITHUB_ORG/$REPO_NAME" --template 2>/dev/null || true
-
-echo ""
-echo "Done!"
-echo ""
-echo "Repository: https://github.com/$GITHUB_ORG/$REPO_NAME"
-echo ""
-echo "Next steps:"
-echo "  1. Go to GitHub Classroom"
-echo "  2. Create a new assignment"
-echo "  3. Select '$GITHUB_ORG/$REPO_NAME' as the template repository"
