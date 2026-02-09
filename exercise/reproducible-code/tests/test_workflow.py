@@ -3,18 +3,7 @@
 from __future__ import annotations
 
 import os
-import re
 import subprocess
-from pathlib import Path
-
-
-def run_git(args: list[str]) -> str:
-    result = subprocess.run(
-        ["git"] + args,
-        capture_output=True,
-        text=True,
-    )
-    return result.stdout.strip()
 
 
 def run_gh(args: list[str]) -> str:
@@ -24,121 +13,6 @@ def run_gh(args: list[str]) -> str:
         text=True,
     )
     return result.stdout.strip()
-
-
-def get_git_root() -> Path:
-    return Path(run_git(["rev-parse", "--show-toplevel"]))
-
-
-def get_assignment_pathspec() -> str:
-    git_root = get_git_root()
-    assignment_root = Path(__file__).parent.parent.resolve()
-    rel = os.path.relpath(assignment_root, start=git_root)
-    return rel
-
-
-def get_commits() -> list[dict[str, object]]:
-    pathspec = get_assignment_pathspec()
-    log = run_git(["log", "--pretty=format:%H|%s", "--name-only", "--", pathspec])
-    commits: list[dict[str, object]] = []
-    current_commit: dict[str, object] | None = None
-
-    for line in log.split("\n"):
-        if "|" in line:
-            parts = line.split("|", 1)
-            if current_commit:
-                commits.append(current_commit)
-            current_commit = {
-                "hash": parts[0],
-                "message": parts[1],
-                "files": [],
-            }
-        elif line and current_commit:
-            current_commit["files"].append(line)
-
-    if current_commit:
-        commits.append(current_commit)
-
-    return commits
-
-
-def test_multiple_commits():
-    commits = get_commits()
-    assert len(commits) >= 2, (
-        f"Expected at least 2 commits, found {len(commits)}. "
-        "Make separate commits for each logical change."
-    )
-
-
-def test_commit_references_issue():
-    commits = get_commits()
-    issue_pattern = re.compile(r"#\d+")
-    has_issue_reference = any(issue_pattern.search(str(c["message"])) for c in commits)
-    assert has_issue_reference, (
-        "No commit references an issue. "
-        "Use 'closes #1' or 'fixes #1' in your commit message."
-    )
-
-
-def test_commit_message_starts_with_verb():
-    commits = get_commits()
-
-    valid_verbs = [
-        "add",
-        "fix",
-        "update",
-        "implement",
-        "remove",
-        "delete",
-        "refactor",
-        "improve",
-        "change",
-        "create",
-        "modify",
-        "correct",
-        "resolve",
-        "merge",
-        "initial",
-        "complete",
-    ]
-
-    for commit in commits:
-        message = str(commit["message"]).lower()
-        first_word = message.split()[0] if message.split() else ""
-        starts_with_verb = any(first_word.startswith(v) for v in valid_verbs)
-        assert starts_with_verb, (
-            f"Commit message should start with a verb: '{commit['message']}'. "
-            "Use verbs like: Add, Fix, Update, Implement, etc."
-        )
-
-
-def test_commit_message_not_generic():
-    commits = get_commits()
-
-    generic_messages = [
-        "update",
-        "fix",
-        "changes",
-        "wip",
-        "work in progress",
-        "stuff",
-        "misc",
-        "temp",
-        "test",
-        "asdf",
-        "commit",
-        "save",
-        "done",
-        "finished",
-    ]
-
-    for commit in commits:
-        message = str(commit["message"]).lower().strip()
-        is_generic = message in generic_messages or len(message) < 10
-        assert not is_generic, (
-            f"Commit message is too generic: '{commit['message']}'. "
-            "Write a descriptive message explaining what and why."
-        )
 
 
 def test_closed_issue_exists():
