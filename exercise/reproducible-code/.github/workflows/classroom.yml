@@ -19,6 +19,9 @@ jobs:
     outputs:
       result: ${{ steps.test.outcome }}
       details: ${{ steps.test.outputs.details }}
+      points: ${{ steps.test.outputs.points }}
+      passed: ${{ steps.test.outputs.passed }}
+      total: ${{ steps.test.outputs.total }}
     steps:
       - uses: actions/checkout@v4
 
@@ -38,7 +41,7 @@ jobs:
         continue-on-error: true
         run: |
           set +e
-          OUTPUT=$(uv run pytest tests/test_reproducible_tasks.py -v 2>&1)
+          OUTPUT=$(uv run pytest tests/test_reproducible_tasks.py --junitxml=pytest-repro.xml -v 2>&1)
           EXIT_CODE=$?
           echo "$OUTPUT"
 
@@ -46,6 +49,37 @@ jobs:
           echo "details<<$EOF" >> $GITHUB_OUTPUT
           echo "$OUTPUT" >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
+
+          python - <<'PY'
+          import os
+          import xml.etree.ElementTree as ET
+
+          max_points = 70
+
+          tree = ET.parse("pytest-repro.xml")
+          root = tree.getroot()
+
+          tests = 0
+          failures = 0
+          errors = 0
+          skipped = 0
+          for ts in root.iter("testsuite"):
+              tests += int(ts.attrib.get("tests", 0))
+              failures += int(ts.attrib.get("failures", 0))
+              errors += int(ts.attrib.get("errors", 0))
+              skipped += int(ts.attrib.get("skipped", 0))
+
+          passed = tests - failures - errors - skipped
+          if tests <= 0:
+              raise ValueError("No tests found in JUnit report.")
+
+          points = (max_points * passed) // tests
+
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"passed={passed}\n")
+              f.write(f"total={tests}\n")
+              f.write(f"points={points}\n")
+          PY
 
           exit $EXIT_CODE
 
@@ -55,6 +89,9 @@ jobs:
     outputs:
       result: ${{ steps.test.outcome }}
       details: ${{ steps.test.outputs.details }}
+      points: ${{ steps.test.outputs.points }}
+      passed: ${{ steps.test.outputs.passed }}
+      total: ${{ steps.test.outputs.total }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -76,7 +113,7 @@ jobs:
         continue-on-error: true
         run: |
           set +e
-          OUTPUT=$(uv run pytest tests/test_workflow.py -v 2>&1)
+          OUTPUT=$(uv run pytest tests/test_workflow.py --junitxml=pytest-workflow.xml -v 2>&1)
           EXIT_CODE=$?
           echo "$OUTPUT"
 
@@ -84,6 +121,37 @@ jobs:
           echo "details<<$EOF" >> $GITHUB_OUTPUT
           echo "$OUTPUT" >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
+
+          python - <<'PY'
+          import os
+          import xml.etree.ElementTree as ET
+
+          max_points = 30
+
+          tree = ET.parse("pytest-workflow.xml")
+          root = tree.getroot()
+
+          tests = 0
+          failures = 0
+          errors = 0
+          skipped = 0
+          for ts in root.iter("testsuite"):
+              tests += int(ts.attrib.get("tests", 0))
+              failures += int(ts.attrib.get("failures", 0))
+              errors += int(ts.attrib.get("errors", 0))
+              skipped += int(ts.attrib.get("skipped", 0))
+
+          passed = tests - failures - errors - skipped
+          if tests <= 0:
+              raise ValueError("No tests found in JUnit report.")
+
+          points = (max_points * passed) // tests
+
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"passed={passed}\n")
+              f.write(f"total={tests}\n")
+              f.write(f"points={points}\n")
+          PY
 
           exit $EXIT_CODE
         env:
@@ -98,21 +166,20 @@ jobs:
     steps:
       - name: Generate feedback comment
         run: |
-          REPRO_RESULT="${{ needs.reproducible-code.outputs.result }}"
-          WORKFLOW_RESULT="${{ needs.git-workflow.outputs.result }}"
+          REPRO_POINTS="${{ needs.reproducible-code.outputs.points }}"
+          REPRO_PASSED="${{ needs.reproducible-code.outputs.passed }}"
+          REPRO_TOTAL="${{ needs.reproducible-code.outputs.total }}"
+          WORKFLOW_POINTS="${{ needs.git-workflow.outputs.points }}"
+          WORKFLOW_PASSED="${{ needs.git-workflow.outputs.passed }}"
+          WORKFLOW_TOTAL="${{ needs.git-workflow.outputs.total }}"
 
-          REPRO_POINTS=0
-          WORKFLOW_POINTS=0
-
-          if [ "$REPRO_RESULT" == "success" ]; then
-            REPRO_POINTS=70
+          if [ "$REPRO_POINTS" -eq 70 ]; then
             REPRO_EMOJI="✅"
           else
             REPRO_EMOJI="❌"
           fi
 
-          if [ "$WORKFLOW_RESULT" == "success" ]; then
-            WORKFLOW_POINTS=30
+          if [ "$WORKFLOW_POINTS" -eq 30 ]; then
             WORKFLOW_EMOJI="✅"
           else
             WORKFLOW_EMOJI="❌"
@@ -123,16 +190,16 @@ jobs:
           cat << 'COMMENT_EOF' > comment.md
           ## 📊 Autograding Results
 
-          | Component | Status | Points |
-          |-----------|--------|--------|
+          | Component | Status | Points | Tests |
+          |-----------|--------|--------|-------|
           COMMENT_EOF
 
-          echo "| Reproducible Code | $REPRO_EMOJI | $REPRO_POINTS/70 |" >> comment.md
-          echo "| Git Workflow | $WORKFLOW_EMOJI | $WORKFLOW_POINTS/30 |" >> comment.md
+          echo "| Reproducible Code | $REPRO_EMOJI | $REPRO_POINTS/70 | $REPRO_PASSED/$REPRO_TOTAL |" >> comment.md
+          echo "| Git Workflow | $WORKFLOW_EMOJI | $WORKFLOW_POINTS/30 | $WORKFLOW_PASSED/$WORKFLOW_TOTAL |" >> comment.md
           echo "| Total |  | $TOTAL/100 |" >> comment.md
           echo "" >> comment.md
 
-          if [ "$REPRO_RESULT" != "success" ]; then
+          if [ "$REPRO_POINTS" -ne 70 ]; then
             cat << 'FEEDBACK_EOF' >> comment.md
           ### Reproducible code issues
 
@@ -147,7 +214,7 @@ jobs:
           FEEDBACK_EOF
           fi
 
-          if [ "$WORKFLOW_RESULT" != "success" ]; then
+          if [ "$WORKFLOW_POINTS" -ne 30 ]; then
             cat << 'FEEDBACK_EOF' >> comment.md
           ### Git workflow issues
 
