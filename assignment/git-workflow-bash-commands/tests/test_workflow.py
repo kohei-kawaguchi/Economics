@@ -1,22 +1,31 @@
 """Tests for git workflow compliance."""
 
 import os
-import re
 import subprocess
 from pathlib import Path
 
 
-def run_git(args):
-    """Run a git command and return output."""
+def get_git_root() -> Path:
     result = subprocess.run(
-        ["git"] + args,
+        ["git", "rev-parse", "--show-toplevel"],
+        capture_output=True,
+        text=True,
+    )
+    return Path(result.stdout.strip())
+
+
+def run_git(args: list[str]) -> str:
+    """Run a git command and return output."""
+    git_root = get_git_root()
+    result = subprocess.run(
+        ["git", "-C", str(git_root)] + args,
         capture_output=True,
         text=True,
     )
     return result.stdout.strip()
 
 
-def run_gh(args):
+def run_gh(args: list[str]) -> str:
     """Run a gh command and return output."""
     result = subprocess.run(
         ["gh"] + args,
@@ -24,10 +33,6 @@ def run_gh(args):
         text=True,
     )
     return result.stdout.strip()
-
-
-def get_git_root() -> Path:
-    return Path(run_git(["rev-parse", "--show-toplevel"]))
 
 
 def get_assignment_pathspec() -> str:
@@ -63,93 +68,49 @@ def get_commits():
     return commits
 
 
-def test_multiple_commits():
-    """Repository should have multiple commits (not everything squashed)."""
-    commits = get_commits()
-    assert len(commits) >= 2, (
-        f"Expected at least 2 commits, found {len(commits)}. "
-        "Make separate commits for each logical change."
-    )
+def is_relevant_commit_message(message: str) -> bool:
+    normalized = message.strip().lower()
+    if not normalized:
+        return False
 
-
-def test_commit_references_issue():
-    """At least one commit should reference an issue (e.g., #1)."""
-    commits = get_commits()
-    issue_pattern = re.compile(r"#\d+")
-    has_issue_reference = any(issue_pattern.search(c["message"]) for c in commits)
-    assert has_issue_reference, (
-        "No commit references an issue. "
-        "Use 'closes #1' or 'fixes #1' in your commit message."
-    )
-
-
-def test_commit_message_starts_with_verb():
-    """Commit messages should start with an action verb."""
-    commits = get_commits()
-
-    valid_verbs = [
-        "add",
-        "fix",
-        "update",
-        "implement",
-        "remove",
-        "delete",
-        "refactor",
-        "improve",
-        "change",
-        "create",
-        "modify",
-        "correct",
-        "resolve",
-        "merge",
-        "initial",
-        "complete",
-    ]
-
-    for commit in commits:
-        message = commit["message"].lower()
-        first_word = message.split()[0] if message.split() else ""
-        starts_with_verb = any(first_word.startswith(v) for v in valid_verbs)
-        assert starts_with_verb, (
-            f"Commit message should start with a verb: '{commit['message']}'. "
-            "Use verbs like: Add, Fix, Update, Implement, etc."
-        )
-
-
-def test_commit_message_not_generic():
-    """Commit messages should be descriptive, not generic."""
-    commits = get_commits()
-
-    generic_messages = [
+    words = normalized.split()
+    generic_single_words = {
         "update",
         "fix",
         "changes",
         "wip",
-        "work in progress",
-        "stuff",
+        "test",
         "misc",
         "temp",
-        "test",
-        "asdf",
         "commit",
         "save",
         "done",
-        "finished",
-    ]
+    }
+    if len(words) == 1 and words[0] in generic_single_words:
+        return False
+
+    return True
+
+
+def test_has_commits():
+    commits = [c for c in get_commits() if c["files"]]
+    assert commits, "No commits found for this assignment."
+
+
+def test_commit_messages_are_relevant():
+    commits = [c for c in get_commits() if c["files"]]
 
     for commit in commits:
-        message = commit["message"].lower().strip()
-        is_generic = message in generic_messages or len(message) < 10
-        assert not is_generic, (
-            f"Commit message is too generic: '{commit['message']}'. "
-            "Write a descriptive message explaining what and why."
+        assert is_relevant_commit_message(message=commit["message"]), (
+            "Commit message is too generic. "
+            f"Message: '{commit['message']}'. "
+            "Use a short but specific message."
         )
 
 
 def test_closed_issue_exists():
     """Repository should have at least one closed issue."""
     repo = os.environ.get("GITHUB_REPOSITORY", "")
-
     if not repo:
         return
 
@@ -164,7 +125,6 @@ def test_closed_issue_exists():
 def test_merged_pr_exists():
     """Repository should have at least one merged pull request."""
     repo = os.environ.get("GITHUB_REPOSITORY", "")
-
     if not repo:
         return
 

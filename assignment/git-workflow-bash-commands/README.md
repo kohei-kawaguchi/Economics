@@ -69,7 +69,7 @@ Run the full test suite:
 uv run pytest -v
 ```
 
-Make multiple commits as you work. At least one commit message must reference the issue number (for example, `closes #1`). Push your branch, open a pull request, and merge it.
+Make multiple commits as you work. Use relevant commit messages. Push your branch, open a pull request, and merge it.
 
 ## Grading criteria
 

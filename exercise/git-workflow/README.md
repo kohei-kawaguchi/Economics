@@ -111,12 +111,8 @@ Your submission is graded on two components:
 - `calculate_mean` function returns correct results
 
 **Git Workflow (50 points)**
-- Multiple commits (not everything in one commit)
-- Commit message references issue (e.g., `closes #1`)
-- Commit messages start with verb (Add, Fix, Update, Implement, etc.)
-- Commit messages are descriptive (not generic like "update" or "fix")
-- Commit messages mention relevant content (e.g., "mean" when implementing mean)
-- Implementation commit only modifies `src/analysis.py` (minimal)
+- Commits are minimal and complete
+- Commit messages are relevant
 - Issue is closed
 - Pull request is merged
 
