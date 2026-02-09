@@ -19,6 +19,9 @@ jobs:
     outputs:
       result: ${{ steps.test.outcome }}
       details: ${{ steps.test.outputs.details }}
+      points: ${{ steps.test.outputs.points }}
+      passed: ${{ steps.test.outputs.passed }}
+      total: ${{ steps.test.outputs.total }}
     steps:
       - uses: actions/checkout@v4
 
@@ -38,7 +41,7 @@ jobs:
         continue-on-error: true
         run: |
           set +e
-          OUTPUT=$(uv run pytest tests/test_bash_tasks.py -v 2>&1)
+          OUTPUT=$(uv run pytest tests/test_bash_tasks.py --junitxml=pytest-bash.xml -v 2>&1)
           EXIT_CODE=$?
           echo "$OUTPUT"
 
@@ -46,6 +49,37 @@ jobs:
           echo "details<<$EOF" >> $GITHUB_OUTPUT
           echo "$OUTPUT" >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
+
+          python - <<'PY'
+          import os
+          import xml.etree.ElementTree as ET
+
+          max_points = 40
+
+          tree = ET.parse("pytest-bash.xml")
+          root = tree.getroot()
+
+          tests = 0
+          failures = 0
+          errors = 0
+          skipped = 0
+          for ts in root.iter("testsuite"):
+              tests += int(ts.attrib.get("tests", 0))
+              failures += int(ts.attrib.get("failures", 0))
+              errors += int(ts.attrib.get("errors", 0))
+              skipped += int(ts.attrib.get("skipped", 0))
+
+          passed = tests - failures - errors - skipped
+          if tests <= 0:
+              raise ValueError("No tests found in JUnit report.")
+
+          points = (max_points * passed) // tests
+
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"passed={passed}\n")
+              f.write(f"total={tests}\n")
+              f.write(f"points={points}\n")
+          PY
 
           exit $EXIT_CODE
 
@@ -55,6 +89,9 @@ jobs:
     outputs:
       result: ${{ steps.test.outcome }}
       details: ${{ steps.test.outputs.details }}
+      points: ${{ steps.test.outputs.points }}
+      passed: ${{ steps.test.outputs.passed }}
+      total: ${{ steps.test.outputs.total }}
     steps:
       - uses: actions/checkout@v4
 
@@ -74,7 +111,7 @@ jobs:
         continue-on-error: true
         run: |
           set +e
-          OUTPUT=$(uv run pytest tests/test_analysis.py -v 2>&1)
+          OUTPUT=$(uv run pytest tests/test_analysis.py --junitxml=pytest-code.xml -v 2>&1)
           EXIT_CODE=$?
           echo "$OUTPUT"
 
@@ -82,6 +119,37 @@ jobs:
           echo "details<<$EOF" >> $GITHUB_OUTPUT
           echo "$OUTPUT" >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
+
+          python - <<'PY'
+          import os
+          import xml.etree.ElementTree as ET
+
+          max_points = 30
+
+          tree = ET.parse("pytest-code.xml")
+          root = tree.getroot()
+
+          tests = 0
+          failures = 0
+          errors = 0
+          skipped = 0
+          for ts in root.iter("testsuite"):
+              tests += int(ts.attrib.get("tests", 0))
+              failures += int(ts.attrib.get("failures", 0))
+              errors += int(ts.attrib.get("errors", 0))
+              skipped += int(ts.attrib.get("skipped", 0))
+
+          passed = tests - failures - errors - skipped
+          if tests <= 0:
+              raise ValueError("No tests found in JUnit report.")
+
+          points = (max_points * passed) // tests
+
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"passed={passed}\n")
+              f.write(f"total={tests}\n")
+              f.write(f"points={points}\n")
+          PY
 
           exit $EXIT_CODE
 
@@ -95,6 +163,9 @@ jobs:
     outputs:
       result: ${{ steps.test.outcome }}
       details: ${{ steps.test.outputs.details }}
+      points: ${{ steps.test.outputs.points }}
+      passed: ${{ steps.test.outputs.passed }}
+      total: ${{ steps.test.outputs.total }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -116,7 +187,7 @@ jobs:
         continue-on-error: true
         run: |
           set +e
-          OUTPUT=$(uv run pytest tests/test_workflow.py -v 2>&1)
+          OUTPUT=$(uv run pytest tests/test_workflow.py --junitxml=pytest-workflow.xml -v 2>&1)
           EXIT_CODE=$?
           echo "$OUTPUT"
 
@@ -124,6 +195,37 @@ jobs:
           echo "details<<$EOF" >> $GITHUB_OUTPUT
           echo "$OUTPUT" >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
+
+          python - <<'PY'
+          import os
+          import xml.etree.ElementTree as ET
+
+          max_points = 30
+
+          tree = ET.parse("pytest-workflow.xml")
+          root = tree.getroot()
+
+          tests = 0
+          failures = 0
+          errors = 0
+          skipped = 0
+          for ts in root.iter("testsuite"):
+              tests += int(ts.attrib.get("tests", 0))
+              failures += int(ts.attrib.get("failures", 0))
+              errors += int(ts.attrib.get("errors", 0))
+              skipped += int(ts.attrib.get("skipped", 0))
+
+          passed = tests - failures - errors - skipped
+          if tests <= 0:
+              raise ValueError("No tests found in JUnit report.")
+
+          points = (max_points * passed) // tests
+
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"passed={passed}\n")
+              f.write(f"total={tests}\n")
+              f.write(f"points={points}\n")
+          PY
 
           exit $EXIT_CODE
         env:
@@ -138,30 +240,29 @@ jobs:
     steps:
       - name: Generate feedback comment
         run: |
-          BASH_RESULT="${{ needs.bash-tasks.outputs.result }}"
-          CODE_RESULT="${{ needs.code-correctness.outputs.result }}"
-          WORKFLOW_RESULT="${{ needs.git-workflow.outputs.result }}"
+          BASH_POINTS="${{ needs.bash-tasks.outputs.points }}"
+          BASH_PASSED="${{ needs.bash-tasks.outputs.passed }}"
+          BASH_TOTAL="${{ needs.bash-tasks.outputs.total }}"
+          CODE_POINTS="${{ needs.code-correctness.outputs.points }}"
+          CODE_PASSED="${{ needs.code-correctness.outputs.passed }}"
+          CODE_TOTAL="${{ needs.code-correctness.outputs.total }}"
+          WORKFLOW_POINTS="${{ needs.git-workflow.outputs.points }}"
+          WORKFLOW_PASSED="${{ needs.git-workflow.outputs.passed }}"
+          WORKFLOW_TOTAL="${{ needs.git-workflow.outputs.total }}"
 
-          BASH_POINTS=0
-          CODE_POINTS=0
-          WORKFLOW_POINTS=0
-
-          if [ "$BASH_RESULT" == "success" ]; then
-            BASH_POINTS=40
+          if [ "$BASH_POINTS" -eq 40 ]; then
             BASH_EMOJI="✅"
           else
             BASH_EMOJI="❌"
           fi
 
-          if [ "$CODE_RESULT" == "success" ]; then
-            CODE_POINTS=30
+          if [ "$CODE_POINTS" -eq 30 ]; then
             CODE_EMOJI="✅"
           else
             CODE_EMOJI="❌"
           fi
 
-          if [ "$WORKFLOW_RESULT" == "success" ]; then
-            WORKFLOW_POINTS=30
+          if [ "$WORKFLOW_POINTS" -eq 30 ]; then
             WORKFLOW_EMOJI="✅"
           else
             WORKFLOW_EMOJI="❌"
@@ -172,17 +273,17 @@ jobs:
           cat << 'COMMENT_EOF' > comment.md
           ## 📊 Autograding Results
 
-          | Component | Status | Points |
-          |-----------|--------|--------|
+          | Component | Status | Points | Tests |
+          |-----------|--------|--------|-------|
           COMMENT_EOF
 
-          echo "| Bash Tasks | $BASH_EMOJI | $BASH_POINTS/40 |" >> comment.md
-          echo "| Code Correctness | $CODE_EMOJI | $CODE_POINTS/30 |" >> comment.md
-          echo "| Git Workflow | $WORKFLOW_EMOJI | $WORKFLOW_POINTS/30 |" >> comment.md
+          echo "| Bash Tasks | $BASH_EMOJI | $BASH_POINTS/40 | $BASH_PASSED/$BASH_TOTAL |" >> comment.md
+          echo "| Code Correctness | $CODE_EMOJI | $CODE_POINTS/30 | $CODE_PASSED/$CODE_TOTAL |" >> comment.md
+          echo "| Git Workflow | $WORKFLOW_EMOJI | $WORKFLOW_POINTS/30 | $WORKFLOW_PASSED/$WORKFLOW_TOTAL |" >> comment.md
           echo "| Total |  | $TOTAL/100 |" >> comment.md
           echo "" >> comment.md
 
-          if [ "$BASH_RESULT" != "success" ]; then
+          if [ "$BASH_POINTS" -ne 40 ]; then
             cat << 'FEEDBACK_EOF' >> comment.md
           ### Bash tasks issues
 
@@ -197,7 +298,7 @@ jobs:
           FEEDBACK_EOF
           fi
 
-          if [ "$CODE_RESULT" != "success" ]; then
+          if [ "$CODE_POINTS" -ne 30 ]; then
             cat << 'FEEDBACK_EOF' >> comment.md
           ### Code correctness issues
 
@@ -206,16 +307,11 @@ jobs:
           FEEDBACK_EOF
           fi
 
-          if [ "$WORKFLOW_RESULT" != "success" ]; then
+          if [ "$WORKFLOW_POINTS" -ne 30 ]; then
             cat << 'FEEDBACK_EOF' >> comment.md
           ### Git workflow issues
 
-          Make sure you:
-
-          - Use multiple commits
-          - Reference the issue number in at least one commit (closes #1)
-          - Use descriptive commit messages that start with a verb
-          - Create a pull request and merge it
+          Some workflow tests did not pass. Check the test output in the Actions tab for details.
 
           FEEDBACK_EOF
           fi
