@@ -468,9 +468,3 @@ Before considering code complete, verify:
 - [ ] Code follows DRY principles (no duplication)
 - [ ] Functions use named arguments
 
-## References
-
-- Sandve, G. K., Nekrutenko, A., Taylor, J., & Hovig, E. (2013). Ten simple rules for reproducible computational research. *PLoS computational biology*, 9(10), e1003285.
-- Wilson, G., et al. (2014). Best practices for scientific computing. *PLoS biology*, 12(1), e1001745.
-- Project-specific guidelines: See `.cursorrules` for additional reproducibility principles
-
