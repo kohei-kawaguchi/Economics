@@ -307,3 +307,23 @@ Each exercise corresponds to workflow documentation in `docs/workflow/`:
 | `git-workflow` | `docs/workflow/version_control.md` |
 | `data-pipeline` | `docs/workflow/data_pipeline.md` |
 
+## Publishing Classroom Templates
+
+Use the scripts in `scripts/` to publish exercise repositories.
+
+- Publish public classroom template:
+  ```bash
+  ./scripts/publish_exercise.sh <exercise-folder> <github-org>
+  ```
+- Publish hidden tests and configure Actions variables/secrets on the public repo:
+  ```bash
+  HIDDEN_TESTS_TOKEN_VALUE=<token> ./scripts/publish_hidden_tests.sh <exercise-folder> <github-org> <private-tests-repo>
+  ```
+
+Example:
+
+```bash
+./scripts/publish_exercise.sh randomization_inference_variant my-org
+HIDDEN_TESTS_TOKEN_VALUE=<token> ./scripts/publish_hidden_tests.sh randomization_inference_variant my-org my-org/private-autograde-tests
+```
+
